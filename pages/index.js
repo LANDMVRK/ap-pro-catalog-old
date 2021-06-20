@@ -2,7 +2,7 @@ import Head from 'next/head'
 
 import Mod from '../components/Mod'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import sortBy from 'lodash.sortby'
 
@@ -13,6 +13,9 @@ import tags from '../../tags.json'
 import platforms from '../../platforms.json'
 
 import StickySidebar2 from '../sticky-sidebar'
+
+import { formatDistanceStrict } from 'date-fns'
+import { ru } from 'date-fns/locale'
 
 // так надо. должны быть строки...
 const years = []
@@ -26,7 +29,50 @@ const separator = '_'
 
 const isBrowser = typeof window !== 'undefined'
 
-function Index() {
+let requests = 0
+const serverStarted = Date.now()
+
+export async function getServerSideProps(context) {
+  requests++
+
+  const { headers, httpVersion, method, url, socket } = context.req
+  const ts = new Date().toString()
+  const ip = socket.remoteAddress
+  
+
+  console.log(`REQUEST HITS! ${ts} ${ip} ${JSON.stringify({ url, method, headers, httpVersion })}\n`)
+
+
+  return {
+    props: {
+      requests,
+      serverStarted
+    }, // will be passed to the page component as props
+  }
+}
+
+const themes = {
+  graphite: {
+    circle: 'hsl(209deg 0% 14%)',
+    bg: 'hsl(209deg 0% 14% / 70%)',
+    modTagBg: 'hsl(210deg 0% 21%)',
+    radioBorder: 'hsl(210deg 0% 54%)',
+    modTag: 'hsl(210deg 0% 80%)',
+    noBg: 'hsl(210deg 0% 7%)',
+    titleHover: 'palegoldenrod'
+  },
+  indieHackers: {
+    circle: 'hsl(209deg 61% 14%)',
+    bg: 'hsl(209deg 61% 14% / 70%)',
+    modTagBg: '#1f354c',
+    radioBorder: '#6b8aa8',
+    modTag: '#b6cce2',
+    noBg: '#041220',
+    titleHover: 'palegoldenrod'
+  }
+}
+
+function Index(props) {
   if (!isBrowser) {
     return (
       <div className="page">
@@ -41,7 +87,27 @@ function Index() {
     )
   }
 
-  // console.time('index init')
+  console.time('index init')
+
+  // Чтобы время запуска сервера не обновлялось при перерендере.
+  const [firstRenderTime] = useState(Date.now())
+
+  // TO-DO: сохранеие выбранной темы в localStorage
+  const [currentTheme, setTheme] = useState('indieHackers')
+
+  const { style } = document.documentElement
+  const lol = themes[currentTheme]
+
+  style.setProperty('--color-bg', lol.bg)
+  style.setProperty('--color-mod-tag-bg', lol.modTagBg)
+  style.setProperty('--color-radio-border', lol.radioBorder)
+  style.setProperty('--color-mod-tag', lol.modTag)
+  style.setProperty('--color-no-bg', lol.noBg)
+  style.setProperty('--color-title-hover', lol.titleHover)
+
+  const [garbage, setGarbage] = useState(true)
+
+  style.setProperty('--bg-art', garbage ? 'url(/art.jpg)' : 'url()')
 
   const kek = useRef()
 
@@ -61,7 +127,7 @@ function Index() {
   // Не критично.
 
   const router = useRouter()
-  // console.log(router.query)
+  console.log(router.query)
 
   // ----------- ПОДГОТОВКА ДАННЫХ ДЛЯ РЕНДЕРА -----------
 
@@ -179,13 +245,32 @@ function Index() {
     updateURL()
   }
 
-  // console.timeEnd('index init')
+  function changeTheme(e) {
+    setTheme(e.target.dataset.theme)
+  }
+
+  function toggleGarbage() {
+    setGarbage(prevState => !prevState)
+  }
+
+  console.timeEnd('index init')
   return (
     <div className="page">
+      <div className="theme-picker">
+        «Мусор»:<span className="space"> </span><span onClick={toggleGarbage} className="theme-picker__garbage-state">{garbage ? 'есть' : 'нет'}</span><span className="space"> </span>| Тема:
+        <div onClick={changeTheme} className="theme-picker__circle" style={{background: themes.graphite.circle}} data-theme="graphite"></div>
+        <div onClick={changeTheme} className="theme-picker__circle" style={{background: themes.indieHackers.circle}} data-theme="indieHackers"></div>
+        </div>
       <div className="page__logo-wrapper">
+      {garbage &&
         <a href="https://ap-pro.ru/">
           <img className="page__logo" src="/Logo2021_site.png.1d603075f10eb6d7a4300f627d4274d9.png"/>
         </a>
+      }
+      </div>
+      {/* TO-DO: создать новый класс для блока */}
+      <div className="mod">
+        <div>Заходов на страницу (включая ботов) с момента запуска сервера ({formatDistanceStrict(props.serverStarted, firstRenderTime, { locale: ru, addSuffix: true, roundingMethod: 'floor' })}): {props.requests}</div>
       </div>
       <div className="page__flex-govno">
         <div className="page__main">
