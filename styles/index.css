@@ -58,6 +58,33 @@ body {
     font-size: 17px;
 }
 
+.page__sidebar-inner.ad {
+    margin-bottom: 20px;
+    cursor: pointer;
+}
+
+.ad__case {
+    width: 210px;
+    /* margin-top: 10px; */
+    height: 210px;
+    /* background-position: 400px 400px; */
+    background: url(/maxresdefault-removebg-preview.png);
+    background-size: 250% 150%;
+    background-position: -110px -95px;
+    margin: 0 auto;
+    margin-top: -32px;
+    filter: hue-rotate(
+0deg
+) saturate(100%) brightness(150%);
+}
+
+.ololo {
+    text-transform: uppercase;
+    text-align: center;
+    font-size: 19px;
+    margin-top: -15px;
+}
+
 .page__sidebar-title {
     font-size: 19px;
     margin: 20px 0;
