@@ -12,6 +12,14 @@ body {
     color: white;
 }
 
+.tile {
+    background-color: var(--color-bg);
+    border-radius: 10px;
+    padding: 20px;
+    backdrop-filter: blur(7px);
+    margin-bottom: 20px;
+}
+
 .page {
     margin: 0 auto;
     min-width: 1000px;
@@ -50,12 +58,9 @@ body {
     transform: translate3d(0, 0, 0);
     will-change: position, transform;
 
-    background-color: var(--color-bg);
-    border-radius: 10px;
-    padding: 20px;
     height: max-content;
-    backdrop-filter: blur(7px);
     font-size: 17px;
+    margin-bottom: 0;
 }
 
 .page__sidebar-inner.ad {
@@ -81,8 +86,8 @@ body {
 .ololo {
     text-transform: uppercase;
     text-align: center;
-    font-size: 19px;
-    margin-top: -15px;
+    /* font-size: 19px; */
+    /* margin-top: -15px; */
 }
 
 .page__sidebar-title {
@@ -150,3 +155,4 @@ body {
 .space {
     white-space: pre;
 }
+

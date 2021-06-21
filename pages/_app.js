@@ -2,6 +2,7 @@ import '../styles/globals.css'
 // import '../styles/vars.css'
 import '../styles/index.css'
 import '../styles/mod.css'
+import '../styles/random.css'
 import '../styles/buttons.scss'
 
 

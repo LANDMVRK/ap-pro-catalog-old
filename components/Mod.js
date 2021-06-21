@@ -4,7 +4,7 @@ function Mod(props) {
     const displayedRating = Rating.toString().replace('.', ',')
     const displayedViews = Views > 9999 ? new Intl.NumberFormat('ru-ru').format(Views) : Views
     return (
-      <div className="mod">
+      <div className="tile mod">
         <a className="mod__title" href={Url}>{Title}</a>
         <div className="mod__flex-govno">
           <div className="mod__preview-wrapper">

@@ -1,0 +1,54 @@
+.krya {
+    margin: 0 auto;
+    overflow-x: hidden;
+    width: 750px;
+    position: relative;
+}
+
+.krya::after {
+    position: absolute;
+    content: '';
+    width: 2px;
+    top: 0;
+    left: 374px;
+    bottom: 0;
+    background: hsl(36deg 100% 50%);
+}
+
+.hehe {
+    display: flex;
+    position: relative;
+    transition: left 7.5s cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.hehe__card {
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding: 10px;
+    background-clip: content-box;
+    display: block;
+
+    height: 250px;
+    min-width: 250px;
+    max-width: 250px;
+    position: relative;
+}
+
+.hehe__card-bottom {
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    bottom: 0;
+    height: 5px;
+}
+
+.lalka {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.lalka__text {
+    cursor: pointer;
+    font-size: 19px;
+}

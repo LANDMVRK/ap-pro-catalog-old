@@ -1,10 +1,6 @@
 .mod {
-    background-color: var(--color-bg);
-    border-radius: 10px;
-    margin-bottom: 20px;
-    padding: 20px;
+    /* margin-bottom: 20px; */
     min-width: 650px;
-    backdrop-filter: blur(7px);
 }
 
 .mod__title {
