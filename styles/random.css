@@ -51,4 +51,5 @@
 .lalka__text {
     cursor: pointer;
     font-size: 19px;
+    user-select: none;
 }

@@ -47,8 +47,11 @@ export async function getServerSideProps(context) {
   const ts = new Date().toString()
   const ip = socket.remoteAddress
   
-
-  console.log(`REQUEST HITS! ${ts} ${ip} ${JSON.stringify({ url, method, headers, httpVersion })}\n`)
+  console.log(`ЗАПРОС. ${ts}
+${method} ${url} HTTP/${httpVersion}
+IP: ${ip}
+${JSON.stringify(headers)}
+`)
 
 
   return {
@@ -217,7 +220,7 @@ function Index(props) {
       </div>
       <div className="page__flex-govno">
         <div className="page__main">
-          <div style={{display: mods.length ? 'none' : null}} className="mod">Ничего не найдено</div>
+          <div style={{display: mods.length ? 'none' : null}} className="tile">Ничего не найдено</div>
         {
         mods.map(function(mod) {
           return <Mod key={mod.Url} mod={mod} />
