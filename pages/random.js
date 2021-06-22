@@ -9,7 +9,21 @@ import { useState, useRef } from 'react'
 
 import { getRatingColor } from '../js/getRatingColor'
 
+import BezierEasing from 'bezier-easing'
+
+import play from 'audio-play'
+import load from 'audio-loader'
+
 const isBrowser = typeof window !== 'undefined'
+
+const easing = BezierEasing(0.33, 1, 0.68, 1)
+
+let pik
+if (isBrowser) {
+  load('/CS_GO Case + Knife Opening Sound Effect (audio-extractor (mp3cut.net).wav').then(function(buffer) {
+    pik = buffer // => <AudioBuffer>
+  })
+}
 
 export async function getServerSideProps(context) {
   const { headers, httpVersion, method, url, socket } = context.req
@@ -52,6 +66,8 @@ function Random(props) {
       return
     }
 
+    const newLeft = -250 * 47 + random(250)
+
     setLeft(function(prevState) {
       if (prevState !== 0) {
         setMods(getMods())
@@ -64,13 +80,38 @@ function Random(props) {
         // restore animation
         element.style.transition = "";
       }
-      return -250 * 47 + random(250)
+      return newLeft
     })
+
+    let prevBlock = 2
+    const animationDuration = 7500
+
+    const start = Date.now()
+    // https://learn.javascript.ru/css-animations#transition-timing-function
+    const interval = setInterval(function() {
+      const since = Date.now() - start
+      const progress = easing(since/animationDuration)
+      const currentLeft = newLeft * progress
+
+      const blockWIdth = 250
+      // на каком блоке сейчас стрела
+      const currentBlock = Math.ceil((currentLeft + -(blockWIdth * 1.5)) / -blockWIdth)
+      if (currentBlock > prevBlock && pik) {
+          play(pik).play()
+      }
+      prevBlock = currentBlock
+
+      if (since > animationDuration) {
+        clearInterval(interval)
+        // console.log('interval cleared')
+      }
+    }, 75)
+
 
     chgBtnState(statePending)
     setTimeout(function() {
       chgBtnState(stateReady)
-    }, 7500)
+    }, animationDuration)
   }
 
   function flushCss(element) {

@@ -8,6 +8,9 @@
     "start": "next start"
   },
   "dependencies": {
+    "audio-loader": "^1.0.3",
+    "audio-play": "^2.3.1",
+    "bezier-easing": "^2.1.0",
     "date-fns": "^2.22.1",
     "lodash.random": "^3.2.0",
     "lodash.shuffle": "^4.2.0",
