@@ -83,7 +83,7 @@ function Page(props) {
         </Head>
         <style>{test}</style>
         <div className="theme-picker">
-          «Мусор»:<span className="space"> </span><span onClick={toggleGarbage} className="theme-picker__garbage-state">{garbage ? 'есть' : 'нет'}</span><span className="space"> </span>| Тема:
+          «Мусор»:<span className="space"> </span><span onClick={toggleGarbage} className="theme-picker__garbage-state">{garbage === 'true' ? 'есть' : 'нет'}</span><span className="space"> </span>| Тема:
           <div onClick={changeTheme} className="theme-picker__circle" style={{background: themes.graphite.circle}} data-theme="graphite"></div>
           <div onClick={changeTheme} className="theme-picker__circle" style={{background: themes.indieHackers.circle}} data-theme="indieHackers"></div>
           </div>

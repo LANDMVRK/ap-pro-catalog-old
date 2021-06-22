@@ -7,6 +7,8 @@ import { data } from '../js/data.js'
 
 import { useState, useRef } from 'react'
 
+import { getRatingColor } from '../js/getRatingColor'
+
 const isBrowser = typeof window !== 'undefined'
 
 export async function getServerSideProps(context) {
@@ -86,7 +88,7 @@ function Random(props) {
           {
           mods.map(function(mod) {
             const { Url, PicURL, Rating } = mod
-            const ratingColor = Rating >= 7 ? 'lightgreen' : (Rating >= 5 ? 'gold' : 'indianred')
+            const ratingColor = getRatingColor(Rating)
             return (
               <a href={Url} className="hehe__card" style={{backgroundImage: `url(${PicURL})`}} key={mod.Url}>
                 <div className="hehe__card-bottom" style={{background: ratingColor}}></div>

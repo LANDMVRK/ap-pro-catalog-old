@@ -1,6 +1,8 @@
+import { getRatingColor } from '../js/getRatingColor'
+
 function Mod(props) {
     const { Url, Title, PicURL, Description, Tags, Views, ReleaseDate, Rating } = props.mod
-    const ratingColor = Rating >= 7 ? 'lightgreen' : (Rating >= 5 ? 'gold' : 'indianred')
+    const ratingColor = getRatingColor(Rating)
     const displayedRating = Rating.toString().replace('.', ',')
     const displayedViews = Views > 9999 ? new Intl.NumberFormat('ru-ru').format(Views) : Views
     return (
