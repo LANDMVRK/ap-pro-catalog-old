@@ -47,7 +47,7 @@ export async function getServerSideProps(context) {
   const ts = new Date().toString()
   const ip = socket.remoteAddress
   
-  console.log(`ЗАПРОС. ${ts}
+  console.log(`ЗАПРОС ${requests}. ${ts}
 ${method} ${url} HTTP/${httpVersion}
 IP: ${ip}
 ${JSON.stringify(headers)}

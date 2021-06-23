@@ -2,6 +2,9 @@ import { getRatingColor } from '../js/getRatingColor'
 
 function Mod(props) {
     const { Url, Title, PicURL, Description, Tags, Views, ReleaseDate, Rating } = props.mod
+    const tmp = PicURL.split('/')
+    const src = '/previews/' + tmp[tmp.length - 1]
+    
     const ratingColor = getRatingColor(Rating)
     const displayedRating = Rating.toString().replace('.', ',')
     const displayedViews = Views > 9999 ? new Intl.NumberFormat('ru-ru').format(Views) : Views
@@ -10,7 +13,7 @@ function Mod(props) {
         <a className="mod__title" href={Url}>{Title}</a>
         <div className="mod__flex-govno">
           <div className="mod__preview-wrapper">
-            <img className="mod__preview" src={PicURL} loading="lazy" />
+            <img className="mod__preview" src={src} loading="lazy" />
           </div>
           <div className="mod__description">
             {Description}

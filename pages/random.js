@@ -129,9 +129,12 @@ function Random(props) {
           {
           mods.map(function(mod) {
             const { Url, PicURL, Rating } = mod
+            const tmp = PicURL.split('/')
+            const src = '/previews/' + tmp[tmp.length - 1]
+
             const ratingColor = getRatingColor(Rating)
             return (
-              <a href={Url} className="hehe__card" style={{backgroundImage: `url(${PicURL})`}} key={mod.Url}>
+              <a href={Url} className="hehe__card" style={{backgroundImage: `url(${src})`}} key={mod.Url}>
                 <div className="hehe__card-bottom" style={{background: ratingColor}}></div>
               </a>
             )
