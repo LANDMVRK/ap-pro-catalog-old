@@ -21,7 +21,7 @@ const themes = {
     noBg: '#041220',
     titleHover: 'palegoldenrod'
   },
-  ultraviolet: {
+  pink: {
     circle: 'hsl(313deg 61% 14%)',
     bg: 'hsl(313deg 61% 14% / 70%)',
     modTagBg: 'hsl(313deg 42% 21%)',
@@ -96,7 +96,7 @@ function Page(props) {
           «Мусор»:<span className="space"> </span><span onClick={toggleGarbage} className="theme-picker__garbage-state">{garbage === 'true' ? 'есть' : 'нет'}</span><span className="space"> </span>| Тема:
           <div onClick={changeTheme} className="theme-picker__circle" style={{background: themes.graphite.circle}} data-theme="graphite"></div>
           <div onClick={changeTheme} className="theme-picker__circle" style={{background: themes.indieHackers.circle}} data-theme="indieHackers"></div>
-          <div onClick={changeTheme} className="theme-picker__circle" style={{background: themes.ultraviolet.circle}} data-theme="ultraviolet"></div>
+          {/* <div onClick={changeTheme} className="theme-picker__circle" style={{background: themes.pink.circle}} data-theme="pink"></div> */}
           </div>
         <div className="page__logo-wrapper">
         {garbage === 'true' &&
