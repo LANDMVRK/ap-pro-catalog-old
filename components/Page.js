@@ -20,8 +20,18 @@ const themes = {
     modTag: '#b6cce2',
     noBg: '#041220',
     titleHover: 'palegoldenrod'
+  },
+  ultraviolet: {
+    circle: 'hsl(313deg 61% 14%)',
+    bg: 'hsl(313deg 61% 14% / 70%)',
+    modTagBg: 'hsl(313deg 42% 21%)',
+    radioBorder: 'hsl(313deg 26% 54%)',
+    modTag: 'hsl(313deg 43% 80%)',
+    noBg: 'hsl(313deg 78% 7%)',
+    titleHover: 'palegoldenrod'
   }
 }
+
 
 const isBrowser = typeof window !== 'undefined'
 
@@ -86,6 +96,7 @@ function Page(props) {
           «Мусор»:<span className="space"> </span><span onClick={toggleGarbage} className="theme-picker__garbage-state">{garbage === 'true' ? 'есть' : 'нет'}</span><span className="space"> </span>| Тема:
           <div onClick={changeTheme} className="theme-picker__circle" style={{background: themes.graphite.circle}} data-theme="graphite"></div>
           <div onClick={changeTheme} className="theme-picker__circle" style={{background: themes.indieHackers.circle}} data-theme="indieHackers"></div>
+          <div onClick={changeTheme} className="theme-picker__circle" style={{background: themes.ultraviolet.circle}} data-theme="ultraviolet"></div>
           </div>
         <div className="page__logo-wrapper">
         {garbage === 'true' &&
@@ -93,6 +104,11 @@ function Page(props) {
             <img className="page__logo" src="/Logo2021_site.png.1d603075f10eb6d7a4300f627d4274d9.png"/>
           </a>
         }
+        </div>
+        <div className="tile">
+          Благодарность
+          <div>— <a className="page__link" href="https://ap-pro.ru/profile/1580-chiliaz/">Chiliaz</a> — предложил сделать рандомайзер (рулетка);</div>
+          <div>— Остальным форумчанам — за приятную обратную связь и то, что делитесь ссылкой.</div>
         </div>
         {props.children}
       </div>

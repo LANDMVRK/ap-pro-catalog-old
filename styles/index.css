@@ -1,42 +1,3 @@
-body {
-    background-image: linear-gradient(rgba(0, 0, 0, .527), rgba(0, 0, 0, .5)), var(--bg-art);
-    background-color: var(--color-no-bg);
-
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-position: center top;
-    height: 100%;
-    
-    font-family: 'PT Sans', sans-serif;
-    color: white;
-}
-
-.tile {
-    background-color: var(--color-bg);
-    border-radius: 10px;
-    padding: 20px;
-    backdrop-filter: blur(7px);
-    margin-bottom: 20px;
-}
-
-.page {
-    margin: 0 auto;
-    min-width: 1000px;
-    max-width: 1000px;
-}
-
-.page__logo-wrapper {
-    padding: 40px 0;
-    display: flex;
-    justify-content: center;
-}
-
-.page__logo {
-    height: 190px;
-    width: 484px;
-}
-
 .page__flex-govno {
     display: flex;
 }
@@ -124,35 +85,3 @@ body {
 .page__sidebar-list::-webkit-scrollbar-thumb:hover {
     background: var(--color-mod-tag);
 }
-
-.theme-picker {
-    position: fixed;
-    background: black;
-    bottom: 25px;
-    left: 25px;
-    z-index: 999;
-    border: 1px solid rgb(255 255 255 / 30%);
-    padding: 10px 20px;
-    border-radius: 999px;
-    font-size: 17px;
-    display: flex;
-}
-
-.theme-picker__circle  {
-    border-radius: 999px;
-    width: 22px;
-    height: 22px;
-    cursor: pointer;
-    margin-left: 6px;
-}
-
-.theme-picker__garbage-state {
-    text-decoration: underline;
-    cursor: pointer;
-    user-select: none;
-}
-
-.space {
-    white-space: pre;
-}
-

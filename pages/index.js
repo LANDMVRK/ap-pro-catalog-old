@@ -2,10 +2,8 @@ import Link from 'next/link'
 
 import Mod from '../components/Mod'
 import Page from '../components/Page'
-// import RadioGroup from '../components/RadioGroup'
-// import Radio from '../components/Radio'
-
 import { RadioGroup, Radio } from '../components/RadioGroup'
+import Checkbox from '../components/Checkbox'
 
 import { useEffect, useRef, useState } from 'react'
 
@@ -22,8 +20,10 @@ import platforms from '../../platforms.json'
 
 import StickySidebar2 from '../js/sticky-sidebar'
 
-import { formatDistanceStrict } from 'date-fns'
-  import { ru } from 'date-fns/locale'
+// import { formatDistanceStrict } from 'date-fns'
+// import { ru } from 'date-fns/locale'
+
+const sortedTags = sortBy(tags)
 
 // так надо. должны быть строки...
 const years = []
@@ -38,7 +38,7 @@ const separator = '_'
 const isBrowser = typeof window !== 'undefined'
 
 let requests = 0
-const serverStarted = Date.now()
+// const serverStarted = Date.now()
 
 export async function getServerSideProps(context) {
   requests++
@@ -56,8 +56,8 @@ ${JSON.stringify(headers)}
 
   return {
     props: {
-      requests,
-      serverStarted
+      // requests,
+      // serverStarted
     }, // will be passed to the page component as props
   }
 }
@@ -72,7 +72,7 @@ function Index(props) {
   console.time('index init')
 
  // Чтобы время запуска сервера не обновлялось при перерендере.
- const [firstRenderTime] = useState(Date.now())
+//  const [firstRenderTime] = useState(Date.now())
 
   const kek = useRef()
 
@@ -215,9 +215,9 @@ function Index(props) {
   console.timeEnd('index init')
   return (
     <Page>
-      <div className="tile">
+      {/* <div className="tile">
         <div>Заходов на страницу (включая ботов) с момента запуска сервера ({formatDistanceStrict(props.serverStarted, firstRenderTime, { locale: ru, addSuffix: true, roundingMethod: 'floor' })}): {props.requests}</div>
-      </div>
+      </div> */}
       <div className="page__flex-govno">
         <div className="page__main">
           <div style={{display: mods.length ? 'none' : null}} className="tile">Ничего не найдено</div>
@@ -236,86 +236,44 @@ function Index(props) {
           </Link>
           <div class="tile page__sidebar-inner">
             <div className="page__sidebar-title">Тип сортировки</div>
-
             <RadioGroup name="flexRadioDefault" selectedValue={sortType} onChange={changeSortType}>
               <Radio value="Date" label="По дате публикации" />
               <Radio value="Views" label="По числу просмотров" />
               <Radio value="Rating" label="По рейтингу" />
               <Radio value="Reviews" label="По числу отзывов" />
             </RadioGroup>
-              <div className="page__sidebar-title">Платформа</div>
-              <div className="page__sidebar-list">
-              {
-              platforms.map(function(platform, idx) {
-                return (
-                  <div className="form-check">
-                    <input checked={filters.platforms.has(platform)} onChange={() => toggleSet('platforms', platform)} className="form-check-input" type="checkbox" id={'flexCheckDefault' + idx} />
-                    <label className="form-check-label" for={'flexCheckDefault' + idx}>
-                      {platform}
-                    </label>
-                  </div>
-                )
-              })
-              }
-              </div>
-              <div className="page__sidebar-title">Год выхода</div>
-              <div className="page__sidebar-list">
-                {
-                years.map(function(year, idx) {
-                  return (
-                    <div className="form-check">
-                      <input checked={filters.years.has(year)} onChange={() => toggleSet('years', year)} className="form-check-input" type="checkbox" value="" id={'flexCheckDefault22' + idx} />
-                      <label className="form-check-label" for={'flexCheckDefault22' + idx}>
-                        {year}
-                      </label>
-                    </div>
-                  )
-                })
-                }
-              </div>
-              <div className="page__sidebar-title">Теги</div>
-              <div className="page__sidebar-list">
-              {
-              sortBy(tags).map(function(tag, idx) {
-                return (
-                  <div className="form-check">
-                    <input checked={filters.tags.has(tag)} onChange={() => toggleSet('tags', tag)} className="form-check-input" type="checkbox" value="" id={'flexCheckDefault33' + idx} />
-                    <label className="form-check-label" for={'flexCheckDefault33' + idx}>
-                      {tag}
-                    </label>
-                  </div>
-                )
-              })
-              }
-              </div>
-              <div className="page__sidebar-title">Дополнительно</div>
-              <div className="page__sidebar-list">
-                <div className="form-check">
-                  <input checked={filters.review} onChange={toggleBool} className="form-check-input" type="checkbox" value="review" id={'flexCheckDefault123' + 0} />
-                  <label className="form-check-label" for={'flexCheckDefault123' + 0}>
-                    Есть обзор от Волка
-                  </label>
-                </div>
-                <div className="form-check">
-                  <input checked={filters.video} onChange={toggleBool} className="form-check-input" type="checkbox" value="video" id={'flexCheckDefault123' + 1} />
-                  <label className="form-check-label" for={'flexCheckDefault123' + 1}>
-                    Есть видео от Волка
-                  </label>
-                </div>
-                <div className="form-check">
-                  <input checked={filters.screens} onChange={toggleBool} className="form-check-input" type="checkbox" value="screens" id={'flexCheckDefault123' + 2} />
-                  <label className="form-check-label" for={'flexCheckDefault123' + 2}>
-                    Есть скрины от Волка
-                  </label>
-                </div>
-                <div className="form-check">
-                  <input checked={filters.guide} onChange={toggleBool} className="form-check-input" type="checkbox" value="guide" id={'flexCheckDefault123' + 3} />
-                  <label className="form-check-label" for={'flexCheckDefault123' + 3}>
-                    Есть гайд на форуме
-                  </label>
-                </div>
-              </div>
+            <div className="page__sidebar-title">Платформа</div>
+            <div className="page__sidebar-list">
+            {
+            platforms.map(function(platform, idx) {
+              return <Checkbox key={idx} checked={filters.platforms.has(platform)} onChange={() => toggleSet('platforms', platform)} label={platform} />
+            })
+            }
             </div>
+            <div className="page__sidebar-title">Год выхода</div>
+            <div className="page__sidebar-list">
+            {
+            years.map(function(year, idx) {
+              return <Checkbox key={idx} checked={filters.years.has(year)} onChange={() => toggleSet('years', year)} label={year} />
+            })
+            }
+            </div>
+            <div className="page__sidebar-title">Теги</div>
+            <div className="page__sidebar-list">
+            {
+            sortedTags.map(function(tag, idx) {
+              return <Checkbox key={idx} checked={filters.tags.has(tag)} onChange={() => toggleSet('tags', tag)} label={tag} />
+            })
+            }
+            </div>
+            <div className="page__sidebar-title">Дополнительно</div>
+            <div className="page__sidebar-list">
+              <Checkbox checked={filters.review} onChange={toggleBool} value="review" label="Есть обзор от Волка" />
+              <Checkbox checked={filters.video} onChange={toggleBool} value="video" label="Есть видео от Волка" />
+              <Checkbox checked={filters.screens} onChange={toggleBool} value="screens" label="Есть скрины от Волка" />
+              <Checkbox checked={filters.guide} onChange={toggleBool} value="guide" label="Есть гайд на форуме" />
+            </div>
+          </div>
         </div>
       </div>
     </Page>
