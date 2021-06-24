@@ -1,10 +1,5 @@
-// зависимости для этого говна
-@import 'buttons/_functions';
-@import 'buttons/_transition';
-@import 'buttons/_border-radius';
+@import '~bootstrap/scss/mixins';
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/variables';
 
-@import 'buttons/_variables';
-
-
-// спизженные из бутстрапа стили для чихпыхов и радиокнопок
-@import 'buttons/_form-check'
+@import '~bootstrap/scss/forms/form-check';
