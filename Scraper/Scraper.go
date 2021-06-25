@@ -12,6 +12,7 @@ import (
 	"io/ioutil"
 	"strings"
 	"sort"
+	"path"
 
   	"github.com/PuerkitoBio/goquery"
 )
@@ -205,8 +206,7 @@ func savePic(url, folder string) {
 	defer res.Body.Close()
 	content, err := ioutil.ReadAll(res.Body)
 	check(err)
-	kek := strings.Split(url, "/")
-	err = ioutil.WriteFile(folder + kek[len(kek) - 1], content, 0644)
+	err = ioutil.WriteFile(folder + path.Base(url), content, 0644)
 	check(err)
 }
 

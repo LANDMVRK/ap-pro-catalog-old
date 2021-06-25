@@ -8,6 +8,7 @@ import { data } from '../js/data.js'
 import { useState, useRef } from 'react'
 
 import { getRatingColor } from '../js/getRatingColor'
+import { getBase } from '../js/getBase'
 
 import BezierEasing from 'bezier-easing'
 
@@ -133,12 +134,9 @@ function Random(props) {
           {
           mods.map(function(mod) {
             const { Url, PicURL, Rating } = mod
-            const tmp = PicURL.split('/')
-            const src = '/previews/' + tmp[tmp.length - 1]
-
             const ratingColor = getRatingColor(Rating)
             return (
-              <a href={Url} className="hehe__card" style={{backgroundImage: `url(${src})`}} key={mod.Url}>
+              <a href={Url} className="hehe__card" style={{backgroundImage: `url(/previews/${getBase(PicURL)})`}} key={mod.Url}>
                 <div className="hehe__card-bottom" style={{background: ratingColor}}></div>
               </a>
             )
