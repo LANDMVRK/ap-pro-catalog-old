@@ -11,6 +11,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"strings"
+	"sort"
 
   	"github.com/PuerkitoBio/goquery"
 )
@@ -141,6 +142,8 @@ func main() {
 	for k := range tagsSet {
 		tagsArr = append(tagsArr, k)
 	}
+	sort.Strings(tagsArr)
+
 	var platformArr []string
 	for k := range platformSet {
 		platformArr = append(platformArr, k)

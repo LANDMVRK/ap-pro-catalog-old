@@ -21,8 +21,6 @@ import platforms from '../platforms.json'
 // import { formatDistanceStrict } from 'date-fns'
 // import { ru } from 'date-fns/locale'
 
-const sortedTags = sortBy(tags)
-
 // так надо. должны быть строки...
 const years = []
 for (let i = 2007; i <= 2021; i++) {
@@ -259,7 +257,7 @@ function Index(props) {
             <div className="page__sidebar-title">Теги</div>
             <div className="page__sidebar-list">
             {
-            sortedTags.map(function(tag, idx) {
+            tags.map(function(tag, idx) {
               return <Checkbox key={idx} checked={filters.tags.has(tag)} onChange={() => toggleSet('tags', tag)} label={tag} />
             })
             }
