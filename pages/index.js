@@ -18,6 +18,8 @@ const scraped = data
 import tags from '../tags.json'
 import platforms from '../platforms.json'
 
+import random from 'lodash.random'
+
 // import { formatDistanceStrict } from 'date-fns'
 // import { ru } from 'date-fns/locale'
 
@@ -71,6 +73,7 @@ function Index(props) {
 //  const [firstRenderTime] = useState(Date.now())
 
   const kek = useRef()
+  const main = useRef()
 
   if (isBrowser) {
     useEffect(function() {
@@ -86,6 +89,7 @@ function Index(props) {
 
   // Пачиму-та два начальных рендера((
   // Не критично.
+  // UPD: не актуально с SSR.
 
   const router = useRouter()
   console.log(router.query)
@@ -206,7 +210,24 @@ function Index(props) {
     updateURL()
   }
 
+  // TO-DO: переписать более react way
+  function selectRandom() {
+    if (!mods.length) {
+      return
+    }
+    // сбросить аутлайн
+    const withOutline =  main.current.querySelector('.mod[style]')
+    if (withOutline) {
+      withOutline.removeAttribute('style')
+    }
 
+    const n = random(mods.length - 1)
+    const m = main.current.querySelectorAll('.mod')
+    const el = m[n]
+    el.scrollIntoView()
+    // А если мод в самом низу страницы? Надо еще и подсветить.
+    el.style.outline = '3px solid violet'
+  }
 
   console.timeEnd('index init')
   return (
@@ -215,7 +236,7 @@ function Index(props) {
         <div>Заходов на страницу (включая ботов) с момента запуска сервера ({formatDistanceStrict(props.serverStarted, firstRenderTime, { locale: ru, addSuffix: true, roundingMethod: 'floor' })}): {props.requests}</div>
       </div> */}
       <div className="page__flex-govno">
-        <div className="page__main">
+        <div ref={main} className="page__main">
           <div style={{display: mods.length ? 'none' : null}} className="tile">Ничего не найдено</div>
         {
         mods.map(function(mod) {
@@ -224,10 +245,12 @@ function Index(props) {
         }
         </div>
         <div ref={kek} className="page_sidebar">
+          <div onClick={selectRandom} className="tile page__sidebar-inner ad">
+              <div className="ololo">показать случайный мод</div>
+          </div>
           <Link href="/random">
             <div className="tile page__sidebar-inner ad">
-              {/* <div className="ad__case"></div> */}
-                <div className="ololo">Испытать свою удачу</div>
+                <div className="ololo">Испытать удачу в рулетке</div>
             </div>
           </Link>
           <div class="tile page__sidebar-inner">
