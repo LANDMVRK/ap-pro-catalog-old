@@ -15,10 +15,8 @@ import { data } from '../js/data.js'
 
 const scraped = data
 
-import tags from '../../tags.json'
-import platforms from '../../platforms.json'
-
-import StickySidebar2 from '../js/sticky-sidebar'
+import tags from '../tags.json'
+import platforms from '../platforms.json'
 
 // import { formatDistanceStrict } from 'date-fns'
 // import { ru } from 'date-fns/locale'

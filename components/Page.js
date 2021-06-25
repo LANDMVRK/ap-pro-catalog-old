@@ -90,6 +90,7 @@ function Page(props) {
           <link rel="icon" href="/favicon.ico" />
           <link rel="preconnect" href="https://fonts.gstatic.com" />
           <link href="https://fonts.googleapis.com/css2?family=PT+Sans&display=swap" rel="stylesheet" />
+          <script src="https://unpkg.com/sticky-sidebar@3.3.1/dist/sticky-sidebar.js"></script>
         </Head>
         <style>{test}</style>
         <div className="theme-picker">
