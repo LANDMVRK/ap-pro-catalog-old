@@ -13,15 +13,16 @@ import (
 	"strings"
 	"sort"
 	"path"
+	"os"
 
   	"github.com/PuerkitoBio/goquery"
 )
 
 type Mod struct {
 	Title string
-	PicURL string
+	picURL string
 	PicBase string
-	Authors string
+	// Authors string
 	ReleaseDate string
 	Views int
 	Rating float64
@@ -81,11 +82,11 @@ func main() {
 
 			picStyle, _ := doc.Find(".modInfoGrid .cCmsRecord_image").Attr("style")
 			picURL := strings.Split(picStyle, "url(")[1]
-			mod.PicURL = strings.Split(picURL, ")")[0]
+			mod.picURL = strings.Split(picURL, ")")[0]
 
-			mod.PicBase = path.Base(mod.PicURL)
+			mod.PicBase = path.Base(mod.picURL)
 
-			mod.Authors = strings.TrimSpace(doc.Find(".modInfoGrid .fa-user").Parent().Text())
+			// mod.Authors = strings.TrimSpace(doc.Find(".modInfoGrid .fa-user").Parent().Text())
 			mod.ReleaseDate = strings.TrimSpace(doc.Find(".modInfoGrid .fa-clock-o").Parent().Text())
 
 			modInfoGridText := doc.Find(".modInfoGrid").Text()
@@ -159,13 +160,24 @@ func main() {
 
 	fmt.Println("Скачивание превьюшек...")
 	lalka := time.Now()
+	thumbDir := "../public/previews/"
+	archiveDir := "../Picture archive/"
+	err := os.RemoveAll(thumbDir) // https://golang.org/pkg/os/#RemoveAll
+	check(err)
 	for i, mod := range data {
 		wg.Add(1)
 		go func(i int, url string) {
 			defer wg.Done()
-			time.Sleep(time.Duration(i) * 100 * time.Millisecond)
-			savePic(url, "../public/previews/")
-		}(i, mod.PicURL)
+			base := path.Base(url)
+			pic, err := ioutil.ReadFile(archiveDir + base)
+			if err != nil {
+				// TO-DO: оно работает, но может быть не так шустро, как хотелось бы...
+				time.Sleep(time.Duration(i) * 100 * time.Millisecond)
+				pic = getPic(url)
+				writeFile(archiveDir + base, pic)
+			}
+			writeFile(thumbDir + base, pic)
+		}(i, mod.picURL)
 	}
 	wg.Wait()
 	fmt.Println("Заняло времени:", time.Since(lalka))
@@ -200,7 +212,7 @@ func getDocument(url string) *goquery.Document {
 	return doc
 }
 
-func savePic(url, folder string) {
+func getPic(url string) []byte {
 	res, err := http.Get(url)
 	check(err)
 	if res.StatusCode != 200 {
@@ -209,12 +221,17 @@ func savePic(url, folder string) {
 	defer res.Body.Close()
 	content, err := ioutil.ReadAll(res.Body)
 	check(err)
-	err = ioutil.WriteFile(folder + path.Base(url), content, 0644)
-	check(err)
+	return content
 }
 
 func check(err error) {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func writeFile(filename string, data []byte) {
+	os.MkdirAll(path.Dir(filename), 0644)
+	err := ioutil.WriteFile(filename, data, 0644)
+	check(err)
 }
