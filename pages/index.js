@@ -285,6 +285,12 @@ function Index(props) {
             })
             }
             </div>
+            {/* <div className="page__sidebar-title">Отзывы</div>
+            <div className="page__sidebar-list">
+              <Checkbox checked={filters.review} onChange={toggleBool} value="review" label="5 и более" />
+              <Checkbox checked={filters.video} onChange={toggleBool} value="video" label="10 и более" />
+              <Checkbox checked={filters.screens} onChange={toggleBool} value="screens" label="15 и более" />
+            </div> */}
             <div className="page__sidebar-title">Дополнительно</div>
             <div className="page__sidebar-list">
               <Checkbox checked={filters.review} onChange={toggleBool} value="review" label="Есть обзор от Волка" />

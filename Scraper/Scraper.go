@@ -20,6 +20,7 @@ import (
 type Mod struct {
 	Title string
 	PicURL string
+	PicBase string
 	Authors string
 	ReleaseDate string
 	Views int
@@ -81,6 +82,8 @@ func main() {
 			picStyle, _ := doc.Find(".modInfoGrid .cCmsRecord_image").Attr("style")
 			picURL := strings.Split(picStyle, "url(")[1]
 			mod.PicURL = strings.Split(picURL, ")")[0]
+
+			mod.PicBase = path.Base(mod.PicURL)
 
 			mod.Authors = strings.TrimSpace(doc.Find(".modInfoGrid .fa-user").Parent().Text())
 			mod.ReleaseDate = strings.TrimSpace(doc.Find(".modInfoGrid .fa-clock-o").Parent().Text())
