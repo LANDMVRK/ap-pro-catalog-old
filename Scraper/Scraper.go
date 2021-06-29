@@ -126,10 +126,10 @@ func main() {
 	// 7. Записываем результат на диск.
 	file, _ := json.MarshalIndent(Result{scraped.Unix(), data}, "", "    ")
 	// Приложение использует этот файл.
-	_ = ioutil.WriteFile("../data.json", file, 0644)
+	writeFile("../data.json", file)
 	// Для истории.
 	n := fmt.Sprintf("../../Data-%d-%02d-%02d-%02d-%02d-%02d.json", scraped.Year(), scraped.Month(), scraped.Day(), scraped.Hour(), scraped.Minute(), scraped.Second())
-	_ = ioutil.WriteFile(n, file, 0644)
+	writeFile(n, file)
 	
 	fmt.Println("Всё. Результат в файле", n)
 
@@ -154,9 +154,9 @@ func main() {
 		platformArr = append(platformArr, k)
 	}
 	file, _ = json.MarshalIndent(tagsArr, "", "    ")
-	_ = ioutil.WriteFile("../tags.json", file, 0644)
+	writeFile("../tags.json", file)
 	file, _ = json.MarshalIndent(platformArr, "", "    ")
-	_ = ioutil.WriteFile("../platforms.json", file, 0644)
+	writeFile("../platforms.json", file)
 
 	fmt.Println("Скачивание превьюшек...")
 	lalka := time.Now()
