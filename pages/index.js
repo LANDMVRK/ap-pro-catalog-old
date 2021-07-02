@@ -234,9 +234,7 @@ function Index(props) {
   function toggleSidebarItem(id) {
     setSidebarState(function(prevState) {
       const prev = [...prevState]
-      console.log(prev)
       prev[id] = !prev[id]
-      console.log(prev)
       return prev
     })
   }
@@ -286,7 +284,7 @@ function Index(props) {
           </Link>
           <div class="tile page__sidebar-inner">
             <div onClick={() => toggleSidebarItem(0)} className="page__sidebar-flex-govno">
-              <div className="page__sidebar-title">Способ рассчёта рейтинга</div>
+              <div>Способ рассчёта рейтинга</div>
               <IconArrow style={{transform: sidebarState[0] ? null : 'rotate(180deg)'}} className="page__sidebar-arrow" />
             </div>
             {sidebarState[0] &&
@@ -296,7 +294,7 @@ function Index(props) {
               </RadioGroup>
             }
             <div onClick={() => toggleSidebarItem(1)} className="page__sidebar-flex-govno">
-              <div className="page__sidebar-title">Тип сортировки</div>
+              <div>Тип сортировки</div>
               <IconArrow style={{transform: sidebarState[1] ? null : 'rotate(180deg)'}} className="page__sidebar-arrow" />
             </div>
             {sidebarState[1] &&
@@ -308,44 +306,38 @@ function Index(props) {
               </RadioGroup>
             }
             <div onClick={() => toggleSidebarItem(2)} className="page__sidebar-flex-govno">
-              <div className="page__sidebar-title">Платформа</div>
+              <div>Платформа</div>
               <IconArrow style={{transform: sidebarState[2] ? null : 'rotate(180deg)'}} className="page__sidebar-arrow" />
             </div>
-            {sidebarState[2] && 
-              <div className="page__sidebar-list">
-              {
-              platforms.map(function(platform, idx) {
-                return <Checkbox key={idx} checked={filters.platforms.has(platform)} onChange={() => toggleSet('platforms', platform)} label={platform} />
-              })
-              }
-              </div>
+            <div style={{display: sidebarState[2] ? null : 'none'}} className="page__sidebar-list">
+            {
+            platforms.map(function(platform, idx) {
+              return <Checkbox key={idx} checked={filters.platforms.has(platform)} onChange={() => toggleSet('platforms', platform)} label={platform} />
+            })
             }
+            </div>
             <div onClick={() => toggleSidebarItem(3)} className="page__sidebar-flex-govno">
-              <div className="page__sidebar-title">Год выхода</div>
+              <div>Год выхода</div>
               <IconArrow style={{transform: sidebarState[3] ? null : 'rotate(180deg)'}} className="page__sidebar-arrow" />
             </div>
-            {sidebarState[3] && 
-              <div className="page__sidebar-list">
-              {
-              years.map(function(year, idx) {
-                return <Checkbox key={idx} checked={filters.years.has(year)} onChange={() => toggleSet('years', year)} label={year} />
-              })
-              }
-              </div>
+            <div style={{display: sidebarState[3] ? null : 'none'}} className="page__sidebar-list">
+            {
+            years.map(function(year, idx) {
+              return <Checkbox key={idx} checked={filters.years.has(year)} onChange={() => toggleSet('years', year)} label={year} />
+            })
             }
+            </div>
             <div onClick={() => toggleSidebarItem(4)} className="page__sidebar-flex-govno">
-              <div className="page__sidebar-title">Теги</div>
+              <div>Теги</div>
               <IconArrow style={{transform: sidebarState[4] ? null : 'rotate(180deg)'}} className="page__sidebar-arrow" />
             </div>
-            {sidebarState[4] && 
-              <div className="page__sidebar-list">
-              {
-              tags.map(function(tag, idx) {
-                return <Checkbox key={idx} checked={filters.tags.has(tag)} onChange={() => toggleSet('tags', tag)} label={tag} />
-              })
-              }
-              </div>
+            <div style={{display: sidebarState[4] ? null : 'none'}} className="page__sidebar-list">
+            {
+            tags.map(function(tag, idx) {
+              return <Checkbox key={idx} checked={filters.tags.has(tag)} onChange={() => toggleSet('tags', tag)} label={tag} />
+            })
             }
+            </div>
             {/* <div className="page__sidebar-title">Отзывы</div>
             <div className="page__sidebar-list">
               <Checkbox checked={filters.review} onChange={toggleBool} value="review" label="5 и более" />
@@ -353,17 +345,15 @@ function Index(props) {
               <Checkbox checked={filters.screens} onChange={toggleBool} value="screens" label="15 и более" />
             </div> */}
             <div style={{marginBottom: sidebarState[5] ? null : '0'}} onClick={() => toggleSidebarItem(5)} className="page__sidebar-flex-govno">
-              <div className="page__sidebar-title">Дополнительно</div>
+              <div>Дополнительно</div>
               <IconArrow style={{transform: sidebarState[5] ? null : 'rotate(180deg)'}} className="page__sidebar-arrow" />
             </div>
-            {sidebarState[5] &&
-              <div className="page__sidebar-list">
-                <Checkbox checked={filters.review} onChange={toggleBool} value="review" label="Есть обзор от Волка" />
-                <Checkbox checked={filters.video} onChange={toggleBool} value="video" label="Есть видео от Волка" />
-                <Checkbox checked={filters.screens} onChange={toggleBool} value="screens" label="Есть скрины от Волка" />
-                <Checkbox checked={filters.guide} onChange={toggleBool} value="guide" label="Есть гайд на форуме" />
-              </div>
-            }
+            <div style={{display: sidebarState[5] ? null : 'none'}} className="page__sidebar-list">
+              <Checkbox checked={filters.review} onChange={toggleBool} value="review" label="Есть обзор от Волка" />
+              <Checkbox checked={filters.video} onChange={toggleBool} value="video" label="Есть видео от Волка" />
+              <Checkbox checked={filters.screens} onChange={toggleBool} value="screens" label="Есть скрины от Волка" />
+              <Checkbox checked={filters.guide} onChange={toggleBool} value="guide" label="Есть гайд на форуме" />
+            </div>
           </div>
         </div>
       </div>
