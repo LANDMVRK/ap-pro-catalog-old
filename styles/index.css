@@ -51,15 +51,6 @@
     /* margin-top: -15px; */
 }
 
-.page__sidebar-title {
-    font-size: 19px;
-    margin: 20px 0;
-}
-
-.page__sidebar-title:first-child {
-    margin-top: 0;
-}
-
 .page__sidebar-list {
     overflow: auto;
     max-height: 300px;
@@ -84,4 +75,23 @@
 
 .page__sidebar-list::-webkit-scrollbar-thumb:hover {
     background: var(--color-mod-tag);
+}
+
+.page__sidebar-flex-govno {
+    display: flex;
+    font-size: 19px;
+    margin: 20px 0;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.page__sidebar-flex-govno:first-child {
+    margin-top: 0;
+}
+
+.page__sidebar-arrow {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
 }
