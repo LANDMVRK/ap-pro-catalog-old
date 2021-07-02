@@ -14,8 +14,10 @@ import (
 	"sort"
 	"path"
 	"os"
+	"math"
 
   	"github.com/PuerkitoBio/goquery"
+	"github.com/montanaflynn/stats"
 )
 
 type Mod struct {
@@ -26,6 +28,7 @@ type Mod struct {
 	ReleaseDate string
 	Views int
 	Rating float64
+	MedianRating float64
 	Reviews int
 	Description string
 	Video bool
@@ -123,7 +126,80 @@ func main() {
 	}
 	wg.Wait()
 	fmt.Println("Заняло времени:", time.Since(parsingStarted))
-	// 7. Записываем результат на диск.
+	// 7. Генерируем ссылки на дополнительные страницы с отзывами о модах.
+	testMap := make(map[int][]string)
+	for i, mod := range data {
+		if mod.Reviews == 0 { // Чтоб math.Ceil не вернул 0.
+			continue
+		}
+		reviewsPerPage := 25.0
+		// https://stackoverflow.com/questions/32815400/how-to-perform-division-in-go
+		pagesNum := int(math.Ceil(float64(mod.Reviews) / reviewsPerPage))
+		additionalPagesNum := pagesNum - 1
+		if (additionalPagesNum == 0) {
+			continue
+		}
+		additionalUrls := make([]string, additionalPagesNum)
+		for i := range additionalUrls {
+			additionalUrls[i] = fmt.Sprint(mod.Url, "page/", i + 2)
+		}
+		testMap[i] = additionalUrls
+	}
+	fmt.Println("Дополнительных страниц с отзывами о модах:", len(testMap))
+	// 8. Получаем содержимое дополнительных страниц с отзывами о модах.
+	fmt.Println("Получение содержимого дополнительных страниц с отзывами о модах...")
+	lalka11 := time.Now()
+	additionalContent := make(map[int][]*goquery.Document)
+	var keys []int
+	for key := range testMap {
+		keys = append(keys, key)
+	}
+	for _, key := range keys {
+		additionalContent[key] = getDocuments(testMap[key])
+	}
+	fmt.Println("Заняло времени:", time.Since(lalka11))
+
+	// 9. Извлекаем оценки из отзывов.
+	fmt.Println("Извлечение оценок из отзывов...")
+	reviewData := make([][]float64, len(modsContent))
+
+	kek := make([][]*goquery.Document, len(modsContent))
+	for i, doc := range modsContent {
+		kek[i] = append(kek[i], doc)
+	}
+	for key, docs := range additionalContent {
+		for _, doc := range docs {
+			kek[key] = append(kek[key], doc)
+		}
+	}
+
+	for idx, docs := range kek {
+		for _, doc := range docs {
+			sel := "article .ipsList_inline.ipsRating.ipsRating_large"
+			doc.Find(sel).Each(func(i int, s *goquery.Selection) {
+				stars := s.Find(".ipsRating_on").Size()
+				reviewData[idx] = append(reviewData[idx], float64(stars))
+			})
+		}
+	}
+
+	// 10. Вычисляем медианы.
+	fmt.Println("Вычисление медиан...")
+	// https://guilherme-ferreira.me/internet-and-inovation/go-lang/calculating-mean-and-median-using-go/
+	// https://github.com/montanaflynn/stats/blob/master/median.go
+	for i, arr := range reviewData {
+		if len(arr) == 0 {
+			continue
+		}
+		median, _ := stats.Median(arr)
+		data[i].MedianRating = median
+
+		if (data[i].Reviews != len(arr)) {
+			fmt.Println("Количество отзывов не совпадает:", data[i].Reviews, len(arr), data[i].Url)
+		}
+	}
+
+	// 11. Записываем результат на диск.
 	file, _ := json.MarshalIndent(Result{scraped.Unix(), data}, "", "    ")
 	// Приложение использует этот файл.
 	writeFile("../data.json", file)
@@ -131,9 +207,9 @@ func main() {
 	n := fmt.Sprintf("../../Data-%d-%02d-%02d-%02d-%02d-%02d.json", scraped.Year(), scraped.Month(), scraped.Day(), scraped.Hour(), scraped.Minute(), scraped.Second())
 	writeFile(n, file)
 	
-	fmt.Println("Всё. Результат в файле", n)
+	fmt.Println("Всё!")
 
-	// 8. Выполняем дополнительные действия.
+	// 12. Выполняем дополнительные действия.
 
 	tagsSet := make(map[string]bool)
 	platformSet := make(map[string]bool)

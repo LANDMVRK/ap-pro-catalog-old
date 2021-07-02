@@ -33,6 +33,9 @@ const separator = '_'
 
 // TO-DO: полоска активные фильтры??
 
+const CALC_METHOD_MEDIAN = 'median'
+const CALC_METHOD_MEAN = 'mean'
+
 const isBrowser = typeof window !== 'undefined'
 
 let requests = 0
@@ -108,6 +111,7 @@ function Index(props) {
     guide: !!query.guide
   }
   let sortType = query['sort_type'] || 'Date'
+  let ratingCalcMethod = query['rating_calc_method'] || CALC_METHOD_MEDIAN
 
   // 2. Сбрасываем список модов, отображаемых на экране.
   let mods = scraped.Data
@@ -171,7 +175,15 @@ function Index(props) {
 
   // Сортировать лучше в конце уже отфильтрованный список.
   if (sortType !== 'Date') {
-    mods = sortBy(mods, sortType).reverse()
+    const modsClone = [...mods]
+    modsClone.reverse()
+    let field
+    if (sortType === 'Rating') {
+      field = ratingCalcMethod === CALC_METHOD_MEDIAN ? 'MedianRating' : 'Rating'
+    } else {
+      field = sortType
+    }
+    mods = sortBy(modsClone, field).reverse()
   }
 
   // ----------- ОБРАБОТЧИКИ СОБЫТИЙ -----------
@@ -189,6 +201,7 @@ function Index(props) {
       }
     }
     sp.set('sort_type', sortType)
+    sp.set('rating_calc_method', ratingCalcMethod)
     // форсит перерендер страницы
     router.push('/?' + sp.toString(), undefined, { shallow: true })
   }
@@ -207,6 +220,11 @@ function Index(props) {
 
   function changeSortType(e) {
     sortType = e
+    updateURL()
+  }
+  
+  function changeRatingCalcMethod(e) {
+    ratingCalcMethod = e
     updateURL()
   }
 
@@ -240,7 +258,7 @@ function Index(props) {
           <div style={{display: mods.length ? 'none' : null}} className="tile">Ничего не найдено</div>
         {
         mods.map(function(mod) {
-          return <Mod key={mod.Url} mod={mod} />
+          return <Mod key={mod.Url} mod={mod} ratingCalcMethod={ratingCalcMethod} />
         })
         }
         </div>
@@ -254,6 +272,11 @@ function Index(props) {
             </div>
           </Link>
           <div class="tile page__sidebar-inner">
+          <div className="page__sidebar-title">Способ рассчёта рейтинга</div>
+            <RadioGroup name="egeereg" selectedValue={ratingCalcMethod} onChange={changeRatingCalcMethod}>
+              <Radio value={CALC_METHOD_MEDIAN} label="Медиана" />
+              <Radio value={CALC_METHOD_MEAN} label="Среднее арифметическое (как на&nbsp;AP-PRO)" />
+            </RadioGroup>
             <div className="page__sidebar-title">Тип сортировки</div>
             <RadioGroup name="flexRadioDefault" selectedValue={sortType} onChange={changeSortType}>
               <Radio value="Date" label="По дате публикации" />

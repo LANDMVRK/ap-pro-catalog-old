@@ -1,7 +1,10 @@
 import { getRatingColor } from '../js/getRatingColor'
 
 function Mod(props) {
-    const { Url, Title, PicBase, Description, Tags, Views, ReleaseDate, Rating } = props.mod
+    const { Url, Title, PicBase, Description, Tags, Views, ReleaseDate } = props.mod
+    
+    const Rating = props.ratingCalcMethod === 'median' ? props.mod.MedianRating : props.mod.Rating
+    
     const ratingColor = getRatingColor(Rating)
     const displayedRating = Rating.toString().replace('.', ',')
     const displayedViews = Views > 9999 ? new Intl.NumberFormat('ru-ru').format(Views) : Views
