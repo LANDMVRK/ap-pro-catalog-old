@@ -3,6 +3,7 @@
     overflow-x: hidden;
     width: 750px;
     position: relative;
+    mask-image: linear-gradient(to right, transparent 0%, black 50%, transparent 100%);
 }
 
 .krya::after {
