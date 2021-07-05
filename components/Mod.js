@@ -16,7 +16,7 @@ function Mod(props) {
             <img className="mod__preview" src={'/previews/' + PicBase} loading="lazy" />
           </div>
           <div className="mod__description">
-            {Description}
+            <div className="mod__description-text">{Description}</div>
             <div className="mod__tags">
             {
               Tags.map(function(tag) {

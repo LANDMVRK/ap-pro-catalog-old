@@ -32,6 +32,14 @@
     line-height: 1.5;
 }
 
+.mod__description-text {
+    /* https://css-tricks.com/line-clampin/#weird-webkit-flexbox-way */
+    display: -webkit-box;
+    -webkit-line-clamp: 8;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
 .mod__tags {
     margin-top: 9px;
 }
