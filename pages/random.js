@@ -1,66 +1,63 @@
-import Page from "../components/Page"
-
 import shuffle from 'lodash.shuffle'
 import random from 'lodash.random'
-
-import { data } from '../js/data.js'
-
+import BezierEasing from 'bezier-easing'
+import load from 'audio-loader'
+import play from 'audio-play'
 import { useState, useRef } from 'react'
 
+import Page from "../components/Page"
+import { data } from '../js/data.js'
 import { getRatingColor } from '../js/getRatingColor'
-
-import BezierEasing from 'bezier-easing'
-
-import play from 'audio-play'
-import load from 'audio-loader'
 
 const isBrowser = typeof window !== 'undefined'
 
-const easing = BezierEasing(0.33, 1, 0.68, 1)
+const listOfMods = data.Data
+
+// --------- НАСТРОЙКИ АНИМАЦИИ И ЗВУКА ---------
+const cardWidth = 250 // Из CSS.
+const numOfModsToChooseFrom = 50
+const animationDuration = 7500
+const easingFunc = [0.33, 1, 0.68, 1]
+const pathToSound = '/CS_GO Case + Knife Opening Sound Effect (audio-extractor (mp3cut.net).wav'
+
+if (numOfModsToChooseFrom > listOfMods.length) {
+  throw new Error('numOfModsToChooseFrom > listOfMods.length')
+}
+
+// --------- СОСТОЯНИЕ КНОПКИ ---------
+const stateInitial = 0
+const statePending = 1
+const stateReadyForExtraSpin = 2
+
+function getMods() {
+  return shuffle(listOfMods).slice(0, numOfModsToChooseFrom)
+}
 
 let pik
 if (isBrowser) {
-  load('/CS_GO Case + Knife Opening Sound Effect (audio-extractor (mp3cut.net).wav').then(function(buffer) {
+  load(pathToSound).then(function(buffer) {
     pik = buffer // => <AudioBuffer>
   })
 }
 
-let requests = 0
-
-export async function getServerSideProps(context) {
-  requests++
-
-  const { headers, httpVersion, method, url, socket } = context.req
-  const ts = new Date().toString()
-  const ip = socket.remoteAddress
-  
-  console.log(`ЗАПРОС ${requests}. ${ts}
-${method} ${url} HTTP/${httpVersion}
-IP: ${ip}
-${JSON.stringify(headers)}
-`)
-
-  return {
-    props: {}, // will be passed to the page component as props
+const easing = BezierEasing(...easingFunc)
+const style = `
+  .hehe {
+    transition: transform ${animationDuration}ms cubic-bezier(${easingFunc.join()});
   }
-}
+`
 
 function Random(props) {
   if (!isBrowser) {
     return <Page />
   }
 
-  function getMods() {
-    return shuffle(data.Data).slice(0, 50)
-  }
+  // https://www.paulirish.com/2012/why-moving-elements-with-translate-is-better-than-posabs-topleft/
+  // https://medium.com/@iamryanyu/should-i-do-the-animation-with-left-or-translatex-49b65a09cf38
+  // https://webformyself.com/css-ot-a-do-ya-raznica-mezhdu-translate-i-position-relative/
 
   const [mods, setMods] = useState(getMods())
   const [left, setLeft] = useState(0)
-
-  const stateInitial = 0
-  const statePending = 1
-  const stateReady = 2
-
   const [btnState, chgBtnState] = useState(stateInitial)
 
   const ref = useRef()
@@ -69,67 +66,58 @@ function Random(props) {
     if (btnState === statePending) {
       return
     }
+    if (btnState === stateReadyForExtraSpin) {
+      setMods(getMods())
 
-    const newLeft = -250 * 47 + random(250)
+      const el = ref.current
+      el.style.transition = 'none'
+      el.style.transform = 'translateX(0)'
+      el.offsetHeight // https://gist.github.com/paulirish/5d52fb081b3570c81e3a
+      el.style.transition = ''
+    }
 
-    setLeft(function(prevState) {
-      if (prevState !== 0) {
-        setMods(getMods())
-        // https://stackoverflow.com/questions/34726154/temporarily-bypass-a-css-transition
-        const element = ref.current
-        element.style.transition = "none"
-        element.style.left = "0"
-        // apply the "transition: none" and "left: Xpx" rule immediately
-        flushCss(element);
-        // restore animation
-        element.style.transition = "";
-      }
-      return newLeft
-    })
+    chgBtnState(statePending)
 
-    let prevBlock = 2
-    const animationDuration = 7500
+    const newOffset = cardWidth * (numOfModsToChooseFrom - 3) * -1 + random(cardWidth)
+    setLeft(newOffset) // Запустить анимацию.
+
+    setTimeout(function() {
+      chgBtnState(stateReadyForExtraSpin)
+    }, animationDuration)
+
+    // Весь код далее отвечает за звук.
+    let prevCard = 2
 
     const start = Date.now()
-    // https://learn.javascript.ru/css-animations#transition-timing-function
     const interval = setInterval(function() {
       const since = Date.now() - start
-      const progress = easing(since/animationDuration)
-      const currentLeft = newLeft * progress
 
-      const blockWIdth = 250
-      // на каком блоке сейчас стрела
-      const currentBlock = Math.ceil((currentLeft + -(blockWIdth * 1.5)) / -blockWIdth)
-      if (currentBlock > prevBlock && pik) {
-          play(pik).play()
+      // Если к моменту прокрута звук не успел загрузиться,
+      // начнет проигрываться, когда загрузится.
+      if (pik) {
+        // https://learn.javascript.ru/css-animations#transition-timing-function
+        const progress = easing(since / animationDuration)
+        const currentOffset = newOffset * progress // Отрицательное число.
+        const tmp = (currentOffset + cardWidth * -1.5) / -cardWidth
+        const currentCard = Math.ceil(tmp) // На каком моде сейчас стрела.
+        if (currentCard > prevCard) {
+            play(pik).play()
+        }
+        prevCard = currentCard
       }
-      prevBlock = currentBlock
 
       if (since > animationDuration) {
         clearInterval(interval)
-        // console.log('interval cleared')
       }
-    }, 75)
-
-
-    chgBtnState(statePending)
-    setTimeout(function() {
-      chgBtnState(stateReady)
-    }, animationDuration)
-  }
-
-  function flushCss(element) {
-    // By reading the offsetHeight property, we are forcing
-    // the browser to flush the pending CSS changes (which it
-    // does to ensure the value obtained is accurate).
-    element.offsetHeight;
+    }, 50)
   }
 
   return (
     <Page>
       <div className="tile">
         <div class="krya">
-          <div className="hehe" ref={ref} style={{left: left + 'px'}}>
+          <style>{style}</style>
+          <div className="hehe" ref={ref} style={{transform: `translateX(${left}px)`}}>
           {
           mods.map(function(mod) {
             const { Url, PicBase, Rating } = mod
@@ -153,4 +141,27 @@ function Random(props) {
   )
 }
 
+let requests = 0
+
+function getServerSideProps(context) {
+  requests++
+
+  const { headers, httpVersion, method, url, socket } = context.req
+  const ts = new Date().toString()
+  const ip = socket.remoteAddress
+  
+  console.log(`ЗАПРОС ${requests}. ${ts}
+${method} ${url} HTTP/${httpVersion}
+IP: ${ip}
+${JSON.stringify(headers)}
+`)
+
+  return {
+    props: {}, // will be passed to the page component as props
+  }
+}
+
 export default Random
+export {
+  getServerSideProps
+}
