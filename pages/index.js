@@ -12,17 +12,7 @@ import sortBy from 'lodash.sortby'
 
 import { useRouter } from 'next/router'
 
-import { data } from '../js/data.js'
-
-const scraped = data
-
-import tags from '../tags.json'
-import platforms from '../platforms.json'
-
 import random from 'lodash.random'
-
-// import { formatDistanceStrict } from 'date-fns'
-// import { ru } from 'date-fns/locale'
 
 // так надо. должны быть строки...
 const years = []
@@ -39,27 +29,21 @@ const CALC_METHOD_MEAN = 'mean'
 
 const isBrowser = typeof window !== 'undefined'
 
-let requests = 0
-// const serverStarted = Date.now()
-
 export async function getServerSideProps(context) {
-  requests++
+  const scraped = await fetch('http://localhost/data.json')
+  const scrapedJSON = await scraped.json()
 
-  const { headers, httpVersion, method, url, socket } = context.req
-  const ts = new Date().toString()
-  const ip = socket.remoteAddress
-  
-  console.log(`ЗАПРОС ${requests}. ${ts}
-${method} ${url} HTTP/${httpVersion}
-IP: ${ip}
-${JSON.stringify(headers)}
-`)
+  const tags = await fetch('http://localhost/tags.json')
+  const tagsJSON = await tags.json()
 
+  const platforms = await fetch('http://localhost/platforms.json')
+  const platformsJSON = await platforms.json()
 
   return {
     props: {
-      // requests,
-      // serverStarted
+      scraped: scrapedJSON,
+      tags: tagsJSON,
+      platforms: platformsJSON
     }, // will be passed to the page component as props
   }
 }
@@ -70,6 +54,8 @@ function Index(props) {
   if (!isBrowser) {
     return <Page />
   }
+
+  const { scraped, tags, platforms } = props
 
   console.time('index init')
 

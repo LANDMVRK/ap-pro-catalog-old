@@ -6,12 +6,9 @@ import play from 'audio-play'
 import { useState, useRef } from 'react'
 
 import Page from "../components/Page"
-import { data } from '../js/data.js'
 import { getRatingColor } from '../js/getRatingColor'
 
 const isBrowser = typeof window !== 'undefined'
-
-const listOfMods = data.Data
 
 // --------- НАСТРОЙКИ АНИМАЦИИ И ЗВУКА ---------
 const cardWidth = 250 // Из CSS.
@@ -20,18 +17,10 @@ const animationDuration = 7500
 const easingFunc = [0.33, 1, 0.68, 1]
 const pathToSound = '/CS_GO Case + Knife Opening Sound Effect (audio-extractor (mp3cut.net).wav'
 
-if (numOfModsToChooseFrom > listOfMods.length) {
-  throw new Error('numOfModsToChooseFrom > listOfMods.length')
-}
-
 // --------- СОСТОЯНИЕ КНОПКИ ---------
 const stateInitial = 0
 const statePending = 1
 const stateReadyForExtraSpin = 2
-
-function getMods() {
-  return shuffle(listOfMods).slice(0, numOfModsToChooseFrom)
-}
 
 let pik
 if (isBrowser) {
@@ -50,6 +39,16 @@ const style = `
 function Random(props) {
   if (!isBrowser) {
     return <Page />
+  }
+
+  const listOfMods = props.data.Data
+
+  if (numOfModsToChooseFrom > listOfMods.length) {
+    throw new Error('numOfModsToChooseFrom > listOfMods.length')
+  }
+
+  function getMods() {
+    return shuffle(listOfMods).slice(0, numOfModsToChooseFrom)
   }
 
   // https://www.paulirish.com/2012/why-moving-elements-with-translate-is-better-than-posabs-topleft/
@@ -141,23 +140,14 @@ function Random(props) {
   )
 }
 
-let requests = 0
-
-function getServerSideProps(context) {
-  requests++
-
-  const { headers, httpVersion, method, url, socket } = context.req
-  const ts = new Date().toString()
-  const ip = socket.remoteAddress
-  
-  console.log(`ЗАПРОС ${requests}. ${ts}
-${method} ${url} HTTP/${httpVersion}
-IP: ${ip}
-${JSON.stringify(headers)}
-`)
+async function getServerSideProps(context) {
+  const scraped = await fetch('http://localhost/data.json')
+  const scrapedJSON = await scraped.json()
 
   return {
-    props: {}, // will be passed to the page component as props
+    props: {
+      data: scrapedJSON
+    }, // will be passed to the page component as props
   }
 }
 

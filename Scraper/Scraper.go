@@ -202,7 +202,7 @@ func main() {
 	// 11. Записываем результат на диск.
 	file, _ := json.MarshalIndent(Result{scraped.Unix(), data}, "", "    ")
 	// Приложение использует этот файл.
-	writeFile("../data.json", file)
+	writeFile("../Result of scraping/data.json", file)
 	// Для истории.
 	n := fmt.Sprintf("../../Data-%d-%02d-%02d-%02d-%02d-%02d.json", scraped.Year(), scraped.Month(), scraped.Day(), scraped.Hour(), scraped.Minute(), scraped.Second())
 	writeFile(n, file)
@@ -230,13 +230,13 @@ func main() {
 		platformArr = append(platformArr, k)
 	}
 	file, _ = json.MarshalIndent(tagsArr, "", "    ")
-	writeFile("../tags.json", file)
+	writeFile("../Result of scraping/tags.json", file)
 	file, _ = json.MarshalIndent(platformArr, "", "    ")
-	writeFile("../platforms.json", file)
+	writeFile("../Result of scraping/platforms.json", file)
 
 	fmt.Println("Скачивание превьюшек...")
 	lalka := time.Now()
-	thumbDir := "../public/previews/"
+	thumbDir := "../Result of scraping/previews/"
 	archiveDir := "../Picture archive/"
 	err := os.RemoveAll(thumbDir) // https://golang.org/pkg/os/#RemoveAll
 	check(err)

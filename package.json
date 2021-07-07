@@ -13,6 +13,8 @@
     "bezier-easing": "^2.1.0",
     "bootstrap": "^5.0.2",
     "date-fns": "^2.22.1",
+    "express": "^4.17.1",
+    "http-proxy-middleware": "^2.0.1",
     "lodash.random": "^3.2.0",
     "lodash.shuffle": "^4.2.0",
     "lodash.sortby": "^4.7.0",
