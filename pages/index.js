@@ -3,8 +3,7 @@ import Link from 'next/link'
 import Mod from '../components/Mod'
 import Page from '../components/Page'
 import { RadioGroup, Radio } from '../components/RadioGroup'
-import Checkbox from '../components/Checkbox'
-import IconArrow from '../components/IconArrow'
+import MenuSpoiler from '../components/MenuSpoiler'
 
 import { useEffect, useRef, useState } from 'react'
 
@@ -13,6 +12,10 @@ import sortBy from 'lodash.sortby'
 import { useRouter } from 'next/router'
 
 import random from 'lodash.random'
+
+import nookies from 'nookies'
+
+import { Form } from 'react-bootstrap'
 
 // так надо. должны быть строки...
 const years = []
@@ -29,7 +32,7 @@ const CALC_METHOD_MEAN = 'mean'
 
 const isBrowser = typeof window !== 'undefined'
 
-export async function getServerSideProps(context) {
+async function getServerSideProps(ctx) {
   const scraped = await fetch('http://localhost/data.json')
   const scrapedJSON = await scraped.json()
 
@@ -41,6 +44,7 @@ export async function getServerSideProps(context) {
 
   return {
     props: {
+      cookies: { ...nookies.get(ctx) },
       scraped: scrapedJSON,
       tags: tagsJSON,
       platforms: platformsJSON
@@ -51,11 +55,12 @@ export async function getServerSideProps(context) {
 
 
 function Index(props) {
-  if (!isBrowser) {
-    return <Page />
-  }
+  // if (!isBrowser) {
+  //   // cookies
+  //   return <Page />
+  // }
 
-  const { scraped, tags, platforms } = props
+  const { scraped } = props
 
   console.time('index init')
 
@@ -76,8 +81,6 @@ function Index(props) {
       }
     })
   }
-
-  const [sidebarState, setSidebarState] = useState([1, 1, 1, 1, 1, 1])
 
   // Пачиму-та два начальных рендера((
   // Не критично.
@@ -202,7 +205,7 @@ function Index(props) {
   }
 
   function toggleBool(e) {
-    const { value } = e.target
+    const { value } = e.currentTarget.dataset
     filters[value] = !filters[value]
     updateURL()
   }
@@ -215,14 +218,6 @@ function Index(props) {
   function changeRatingCalcMethod(e) {
     ratingCalcMethod = e
     updateURL()
-  }
-
-  function toggleSidebarItem(id) {
-    setSidebarState(function(prevState) {
-      const prev = [...prevState]
-      prev[id] = !prev[id]
-      return prev
-    })
   }
 
   // TO-DO: переписать более react way
@@ -244,9 +239,24 @@ function Index(props) {
     el.style.outline = '3px solid violet'
   }
 
+  const platforms = props.platforms.map(function(p, i) {
+    return <Form.Check key={p} label={p} onChange={() => {toggleSet('platforms', p)}} checked={filters.platforms.has(p)} id={'platform' + i} />
+  })
+
+  // usememo??
+  // or https://reactjs.org/docs/lists-and-keys.html#embedding-map-in-jsx
+
+  const list2 = years.map(function(y, i) {
+    return <Form.Check key={y} label={y} onChange={() => {toggleSet('years', y)}} checked={filters.years.has(y)} id={'year' + i} />
+  })
+
+  const tags = props.tags.map(function(t, i) {
+    return <Form.Check key={t} label={t} onChange={() => {toggleSet('tags', t)}} checked={filters.tags.has(t)} id={'tag' + i} />
+  })
+
   console.timeEnd('index init')
   return (
-    <Page>
+    <Page {...props}>
       {/* <div className="tile">
         <div>Заходов на страницу (включая ботов) с момента запуска сервера ({formatDistanceStrict(props.serverStarted, firstRenderTime, { locale: ru, addSuffix: true, roundingMethod: 'floor' })}): {props.requests}</div>
       </div> */}
@@ -269,77 +279,36 @@ function Index(props) {
             </div>
           </Link>
           <div class="tile page__sidebar-inner">
-            <div onClick={() => toggleSidebarItem(0)} className="page__sidebar-flex-govno">
-              <div>Способ рассчёта рейтинга</div>
-              <IconArrow style={{transform: sidebarState[0] ? null : 'rotate(180deg)'}} className="page__sidebar-arrow" />
-            </div>
-            {sidebarState[0] &&
+            <MenuSpoiler title="Способ рассчёта рейтинга">
               <RadioGroup name="egeereg" selectedValue={ratingCalcMethod} onChange={changeRatingCalcMethod}>
                 <Radio value={CALC_METHOD_MEDIAN} label="Медиана" />
                 <Radio value={CALC_METHOD_MEAN} label="Среднее арифметическое (как на&nbsp;AP-PRO)" />
               </RadioGroup>
-            }
-            <div onClick={() => toggleSidebarItem(1)} className="page__sidebar-flex-govno">
-              <div>Тип сортировки</div>
-              <IconArrow style={{transform: sidebarState[1] ? null : 'rotate(180deg)'}} className="page__sidebar-arrow" />
-            </div>
-            {sidebarState[1] &&
+            </MenuSpoiler>
+            <MenuSpoiler title="Тип сортировки">
               <RadioGroup name="flexRadioDefault" selectedValue={sortType} onChange={changeSortType}>
                 <Radio value="Date" label="По дате публикации" />
                 <Radio value="Views" label="По числу просмотров" />
                 <Radio value="Rating" label="По рейтингу" />
                 <Radio value="Reviews" label="По числу отзывов" />
               </RadioGroup>
-            }
-            <div onClick={() => toggleSidebarItem(2)} className="page__sidebar-flex-govno">
-              <div>Платформа</div>
-              <IconArrow style={{transform: sidebarState[2] ? null : 'rotate(180deg)'}} className="page__sidebar-arrow" />
-            </div>
-            <div style={{display: sidebarState[2] ? null : 'none'}} className="page__sidebar-list">
-            {
-            platforms.map(function(platform, idx) {
-              return <Checkbox key={idx} checked={filters.platforms.has(platform)} onChange={() => toggleSet('platforms', platform)} label={platform} />
-            })
-            }
-            </div>
-            <div onClick={() => toggleSidebarItem(3)} className="page__sidebar-flex-govno">
-              <div>Год выхода</div>
-              <IconArrow style={{transform: sidebarState[3] ? null : 'rotate(180deg)'}} className="page__sidebar-arrow" />
-            </div>
-            <div style={{display: sidebarState[3] ? null : 'none'}} className="page__sidebar-list">
-            {
-            years.map(function(year, idx) {
-              return <Checkbox key={idx} checked={filters.years.has(year)} onChange={() => toggleSet('years', year)} label={year} />
-            })
-            }
-            </div>
-            <div onClick={() => toggleSidebarItem(4)} className="page__sidebar-flex-govno">
-              <div>Теги</div>
-              <IconArrow style={{transform: sidebarState[4] ? null : 'rotate(180deg)'}} className="page__sidebar-arrow" />
-            </div>
-            <div style={{display: sidebarState[4] ? null : 'none'}} className="page__sidebar-list">
-            {
-            tags.map(function(tag, idx) {
-              return <Checkbox key={idx} checked={filters.tags.has(tag)} onChange={() => toggleSet('tags', tag)} label={tag} />
-            })
-            }
-            </div>
-            {/* <div className="page__sidebar-title">Отзывы</div>
-            <div className="page__sidebar-list">
-              <Checkbox checked={filters.review} onChange={toggleBool} value="review" label="5 и более" />
-              <Checkbox checked={filters.video} onChange={toggleBool} value="video" label="10 и более" />
-              <Checkbox checked={filters.screens} onChange={toggleBool} value="screens" label="15 и более" />
-            </div> */}
-            <div style={{marginBottom: sidebarState[5] ? null : '0'}} onClick={() => toggleSidebarItem(5)} className="page__sidebar-flex-govno">
-              <div>Дополнительно</div>
-              <IconArrow style={{transform: sidebarState[5] ? null : 'rotate(180deg)'}} className="page__sidebar-arrow" />
-            </div>
-            <div style={{display: sidebarState[5] ? null : 'none'}} className="page__sidebar-list">
-              <Checkbox checked={filters.review} onChange={toggleBool} value="review" label="Есть обзор от Волка" />
-              <Checkbox checked={filters.video} onChange={toggleBool} value="video" label="Есть видео от Волка" />
-              <Checkbox checked={filters.screens} onChange={toggleBool} value="screens" label="Есть скрины от Волка" />
-              <Checkbox checked={filters.guide} onChange={toggleBool} value="guide" label="Есть гайд на форуме" />
-            </div>
+            </MenuSpoiler>
+            <MenuSpoiler title="Платформа">
+              <div className="page__sidebar-list">{platforms}</div>
+            </MenuSpoiler>
+            <MenuSpoiler title="Год выхода">
+              <div className="page__sidebar-list">{list2}</div>
+            </MenuSpoiler>
+            <MenuSpoiler title="Теги">
+              <div className="page__sidebar-list">{tags}</div>
+            </MenuSpoiler>
+            <MenuSpoiler title="Дополнительно">
+              <div className="page__sidebar-list">
+                <Form.Check label="Есть обзор от Волка" onChange={toggleBool} data-value="review" checked={filters.review} id="add-1" />
+                <Form.Check label="Есть видео от Волка" onChange={toggleBool} data-value="video" checked={filters.video} id="add-2" />
+                <Form.Check label="Есть гайд на форуме" onChange={toggleBool} data-value="guide" checked={filters.guide} id="add-3" />
+              </div>
+            </MenuSpoiler>
           </div>
         </div>
       </div>
@@ -348,3 +317,6 @@ function Index(props) {
 }
 
 export default Index
+export {
+  getServerSideProps
+}

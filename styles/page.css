@@ -26,18 +26,6 @@ body {
     max-width: 1000px;
 }
 
-.page__logo-wrapper {
-    padding: 40px 0;
-    display: flex;
-    justify-content: center;
-}
-
-.page__logo {
-    height: 190px;
-    width: 484px;
-}
-
-
 .theme-picker {
     position: fixed;
     background: black;
@@ -67,13 +55,4 @@ body {
 
 .space {
     white-space: pre;
-}
-
-.page__link {
-    text-decoration: underline;
-    cursor: pointer;
-}
-
-.page__link:hover {
-    color: var(--color-title-hover);
 }

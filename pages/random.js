@@ -4,6 +4,7 @@ import BezierEasing from 'bezier-easing'
 import load from 'audio-loader'
 import play from 'audio-play'
 import { useState, useRef } from 'react'
+import nookies from 'nookies'
 
 import Page from "../components/Page"
 import { getRatingColor } from '../js/getRatingColor'
@@ -37,9 +38,10 @@ const style = `
 `
 
 function Random(props) {
-  if (!isBrowser) {
-    return <Page />
-  }
+  // if (!isBrowser) {
+  //   // cookies...
+  //   return <Page />
+  // }
 
   const listOfMods = props.data.Data
 
@@ -112,7 +114,7 @@ function Random(props) {
   }
 
   return (
-    <Page>
+    <Page {...props}>
       <div className="tile">
         <div class="krya">
           <style>{style}</style>
@@ -140,12 +142,13 @@ function Random(props) {
   )
 }
 
-async function getServerSideProps(context) {
+async function getServerSideProps(ctx) {
   const scraped = await fetch('http://localhost/data.json')
   const scrapedJSON = await scraped.json()
 
   return {
     props: {
+      cookies: { ...nookies.get(ctx) },
       data: scrapedJSON
     }, // will be passed to the page component as props
   }
