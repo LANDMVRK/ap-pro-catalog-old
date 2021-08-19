@@ -1,0 +1,58 @@
+.mod-title {
+  font-size: 24px;
+  margin-bottom: 20px;
+  display: inline-block;
+  &:hover {
+    color: var(--color-title-hover);
+  }
+}
+
+.mod-container {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.mod-preview-wrapper {
+  flex-shrink: 0;
+  width: 190px;
+  margin-right: 15px;
+}
+
+.mod-preview {
+  max-width: 190px;
+  max-height: 190px;
+  border-radius: 6px;
+}
+
+.mod-description {
+  /* https://css-tricks.com/line-clampin/#weird-webkit-flexbox-way */
+  display: -webkit-box;
+  -webkit-line-clamp: 8;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 9px;
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+.mod-tag {
+  font-size: 15px;
+  background: var(--color-mod-tag-bg);
+  color: var(--color-mod-tag);
+  padding: 4px 10px;
+  border-radius: 6px;
+  display: inline-block;
+  margin-right: 6px;
+  margin-top: 6px;
+  &:last-child {
+    margin-right: 0;
+  }
+}
+
+.mod-bottom-item {
+  font-size: 19px;
+  margin-right: 15px;
+  &:last-child {
+    margin: 0;
+  }
+}

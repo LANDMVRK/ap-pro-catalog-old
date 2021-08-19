@@ -30,12 +30,8 @@ function Page(props) {
   const t = themes[theme]
 
   function changeTheme(e) {
-    const { theme } = e.target.dataset
-    setCookie(null, 'theme', theme, {
-      maxAge: 30 * 24 * 60 * 60,
-      path: '/'
-    })
-    setTheme(theme)
+    setCookie(null, 'theme', e.target.dataset, { maxAge: 30 * 24 * 60 * 60, path: '/' })
+    setTheme(e.target.dataset)
   }
 
   function toggleTrash() {
@@ -43,13 +39,10 @@ function Page(props) {
     if (trash) {
       destroyCookie(null, 'trash')
       setTrash(true)
-      return
+    } else {
+      setCookie(null, 'trash', '!', { maxAge: 30 * 24 * 60 * 60, path: '/' })
+      setTrash(false)
     }
-    setCookie(null, 'trash', '!', {
-      maxAge: 30 * 24 * 60 * 60,
-      path: '/'
-    })
-    setTrash(false)
   }
 
   return (
@@ -73,7 +66,7 @@ function Page(props) {
         {'}'}
       </style>
       <div className="theme-picker">
-        «Мусор»:<span className="space"> </span><span onClick={toggleTrash} className="theme-picker__garbage-state">{trash ? 'есть' : 'нет'}</span><span className="space"> </span>| Тема:
+        <span style={{whiteSpace: 'pre'}}>«Мусор»: <span onClick={toggleTrash} className="trash-state">{trash ? 'есть' : 'нет'}</span> | Тема:</span>
         <div onClick={changeTheme} className="theme-picker__circle" style={{background: themes.graphite.circle}} data-theme="graphite"></div>
         <div onClick={changeTheme} className="theme-picker__circle" style={{background: themes.indieHackers.circle}} data-theme="indieHackers"></div>
       </div>
@@ -86,9 +79,9 @@ function Page(props) {
       </div>
       <div className="tile">
         Благодарность
-        <div>— <a className="page__link" href="https://ap-pro.ru/profile/1580-chiliaz/">Chiliaz</a> — идея сделать рандомайзер;</div>
+        <div>— <a className="page__link" href="https://ap-pro.ru/profile/1580-chiliaz/" target="_blank" rel="noopener noreferrer">Chiliaz</a> — идея сделать рандомайзер;</div>
         <div>— Всем — за приятную обратную связь и то, что делитесь ссылкой.</div>
-        <div style={{marginTop: '16px'}}>Написать автору — <a className="page__link" href="https://t.me/xcmoz">t.me/xcmoz</a></div>
+        <div style={{marginTop: '16px'}}>Написать автору — <a className="page__link" href="https://t.me/xcmoz" target="_blank" rel="noopener noreferrer">t.me/xcmoz</a></div>
       </div>
       {props.children}
     </div>

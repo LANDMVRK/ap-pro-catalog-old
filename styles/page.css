@@ -17,6 +17,7 @@ body {
     min-width: 1000px;
     max-width: 1000px;
 }
+
 .theme-picker {
     position: fixed;
     background: black;
@@ -38,14 +39,10 @@ body {
     margin-left: 6px;
 }
 
-.theme-picker__garbage-state {
+.trash-state {
     text-decoration: underline;
     cursor: pointer;
     user-select: none;
-}
-
-.space {
-    white-space: pre;
 }
 
 .page__link {
@@ -56,13 +53,9 @@ body {
 .page__link:hover {
     color: var(--color-title-hover);
 }
+
 .page__logo-wrapper {
     padding: 40px 0;
     display: flex;
     justify-content: center;
 }
-
-/* .page__logo {
-    height: 190px;
-    width: 484px;
-} */

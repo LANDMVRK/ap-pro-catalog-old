@@ -87,7 +87,7 @@ function Index(props) {
   })
 
   const tags = useMemo(function() {
-    console.log('tags')
+    // console.log('tags')
     return props.tags.map(function(t, i) {
       return <Form.Check key={t} label={t} onChange={() => {toggleSet('tags', t)}} checked={filters.tags.has(t)} id={'tag' + i} />
     })

@@ -1,7 +1,3 @@
-function getRatingColor(Rating) {
-    return Rating >= 7 ? 'lightgreen' : (Rating >= 5 ? 'gold' : (Rating === 0 ? 'white' : 'indianred'))
-}
-
-export {
-    getRatingColor
+export function getRatingColor(r) {
+    return r >= 7 ? 'lightgreen' : (r >= 5 ? 'gold' : (r === 0 ? 'white' : 'indianred'))
 }
