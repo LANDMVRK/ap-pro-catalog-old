@@ -1,0 +1,34 @@
+.sidebar-list {
+    overflow: auto;
+    max-height: 300px;
+}
+
+.sidebar-list::-webkit-scrollbar {
+    width: 12px;
+    background: var(--color-mod-tag-bg);
+    border-radius: 6px;
+}
+
+.sidebar-list::-webkit-scrollbar-thumb {
+    width: 12px;
+    background: var(--color-radio-border);
+    border-radius: 6px;
+}
+
+.sidebar-list::-webkit-scrollbar-thumb:hover {
+    background: var(--color-mod-tag);
+}
+
+.sidebar-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 19px;
+    margin: 20px 0;
+    cursor: pointer;
+    user-select: none;
+}
+
+.sidebar-title:first-child {
+    margin-top: 0;
+}

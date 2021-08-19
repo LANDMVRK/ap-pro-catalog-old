@@ -116,7 +116,7 @@ function Random(props) {
   return (
     <Page {...props}>
       <div className="tile">
-        <div class="krya">
+        <div className="krya">
           <style>{style}</style>
           <div className="hehe" ref={ref} style={{transform: `translateX(${left}px)`}}>
           {
