@@ -1,31 +1,18 @@
 import Link from 'next/link'
-
 import Mod from '../components/Mod'
 import Page from '../components/Page'
 import { RadioGroup, Radio } from '../components/RadioGroup'
 import MenuSpoiler from '../components/MenuSpoiler'
-
-import { useEffect, useRef, useState } from 'react'
-
-import sortBy from 'lodash.sortby'
-
-import { useRouter } from 'next/router'
-
-import random from 'lodash.random'
-
-import nookies from 'nookies'
-
 import { Form } from 'react-bootstrap'
 
-// так надо. должны быть строки...
-const years = []
-for (let i = 2007; i <= 2021; i++) {
-  years.push(i.toString())
-}
+import { useEffect, useRef, useState, useMemo } from 'react'
+import { useRouter } from 'next/router'
+import random from 'lodash.random'
+import nookies from 'nookies'
+
+import { filterAndSort } from '../js/filterAndSort'
 
 const separator = '_'
-
-// TO-DO: полоска активные фильтры??
 
 const CALC_METHOD_MEDIAN = 'median'
 const CALC_METHOD_MEAN = 'mean'
@@ -33,65 +20,41 @@ const CALC_METHOD_MEAN = 'mean'
 const isBrowser = typeof window !== 'undefined'
 
 async function getServerSideProps(ctx) {
-  const scraped = await fetch('http://localhost/data.json')
-  const scrapedJSON = await scraped.json()
+  let resp = await fetch('http://localhost/data.json')
+  const scraped = await resp.json()
 
-  const tags = await fetch('http://localhost/tags.json')
-  const tagsJSON = await tags.json()
+  resp = await fetch('http://localhost/tags.json')
+  const tags = await resp.json()
 
-  const platforms = await fetch('http://localhost/platforms.json')
-  const platformsJSON = await platforms.json()
+  resp = await fetch('http://localhost/platforms.json')
+  const platforms = await resp.json()
 
-  return {
-    props: {
-      cookies: { ...nookies.get(ctx) },
-      scraped: scrapedJSON,
-      tags: tagsJSON,
-      platforms: platformsJSON
-    }, // will be passed to the page component as props
+  const props = {
+    cookies: { ...nookies.get(ctx) },
+    scraped, tags, platforms
   }
+  return { props: props }
 }
 
-
-
 function Index(props) {
-  // if (!isBrowser) {
-  //   // cookies
-  //   return <Page />
-  // }
-
-  const { scraped } = props
-
   console.time('index init')
 
- // Чтобы время запуска сервера не обновлялось при перерендере.
-//  const [firstRenderTime] = useState(Date.now())
+  const sidebar = useRef()
+  
+  const [highlighted, setHighlighted] = useState()
 
-  const kek = useRef()
-  const main = useRef()
-
-  if (isBrowser) {
-    useEffect(function() {
-      const stickySidebar = new StickySidebar(kek.current, {
-        topSpacing: 20,
-        bottomSpacing: 20
-      })
-      return function() {
-        stickySidebar.destroy()
-      }
-    })
-  }
-
-  // Пачиму-та два начальных рендера((
-  // Не критично.
-  // UPD: не актуально с SSR.
+  useEffect(function() {
+    if (!isBrowser) {
+      return
+    }
+    const s = new StickySidebar(sidebar.current, { topSpacing: 20, bottomSpacing: 20 })
+    return function() {
+      s.destroy()
+    }
+  })
 
   const router = useRouter()
-  console.log(router.query)
 
-  // ----------- ПОДГОТОВКА ДАННЫХ ДЛЯ РЕНДЕРА -----------
-
-  // 1. Парсим URL и устанавливаем фильтры.
   const { query } = router
   const filters = {
     tags: new Set(query.tags ? query.tags.split(separator) : null),
@@ -99,86 +62,36 @@ function Index(props) {
     years: new Set(query.years ? query.years.split(separator) : null),
     review: !!query.review,
     video: !!query.video,
-    screens: !!query.screens,
     guide: !!query.guide
   }
   let sortType = query['sort_type'] || 'Date'
   let ratingCalcMethod = query['rating_calc_method'] || CALC_METHOD_MEDIAN
 
-  // 2. Сбрасываем список модов, отображаемых на экране.
-  let mods = scraped.Data
+  // Надоело эту портянку здесь читать, вынес в функцию.
+  const _mods = filterAndSort(props.scraped.Data, filters, sortType, ratingCalcMethod)
   
-  // 3. Фильтруем и сортируем список, если надо.
-  function filterMods(filterFn) {
-    mods = mods.filter(filterFn)
-  }
+  const mods = _mods.map(function(m, i) {
+    return <Mod key={m.Url} mod={m} outline={highlighted === i} ratingCalcMethod={ratingCalcMethod} />
+  })
 
-  if (filters.platforms.size) {
-    filterMods(function(mod) {
-      return filters.platforms.has(mod.Platform) ? true : false
+  const platforms = props.platforms.map(function(p, i) {
+    return <Form.Check key={p} label={p} onChange={() => {toggleSet('platforms', p)}} checked={filters.platforms.has(p)} id={'platform' + i} />
+  })
+
+  const _years = []
+  for (let i = 2007; i <= 2021; i++) {
+    _years.push(i.toString())
+  }
+  const years = _years.map(function(y, i) {
+    return <Form.Check key={y} label={y} onChange={() => {toggleSet('years', y)}} checked={filters.years.has(y)} id={'year' + i} />
+  })
+
+  const tags = useMemo(function() {
+    console.log('tags')
+    return props.tags.map(function(t, i) {
+      return <Form.Check key={t} label={t} onChange={() => {toggleSet('tags', t)}} checked={filters.tags.has(t)} id={'tag' + i} />
     })
-  }
-
-  if (filters.years.size) {
-    filterMods(function(mod) {
-      for (let year of filters.years) {
-        if (mod.ReleaseDate.includes(year)) {
-          return true
-        }
-      }
-    })
-  }
-
-  if (filters.tags.size) {
-    filterMods(function(mod) {
-      let find = 0
-      mod.Tags.forEach(function(tag) {
-        if (filters.tags.has(tag)) {
-          find++
-        }
-      })
-      return find === filters.tags.size ? true : false
-    })
-  }
-
-  if (filters.review) {
-    filterMods(function(mod) {
-      return mod.Review
-    })
-  }
-
-  if (filters.video) {
-    filterMods(function(mod) {
-      return mod.Video
-    })
-  }
-
-  if (filters.screens) {
-    filterMods(function(mod) {
-      return mod.Screens
-    })
-  }
-
-  if (filters.guide) {
-    filterMods(function(mod) {
-      return mod.Guide
-    })
-  }
-
-  // Сортировать лучше в конце уже отфильтрованный список.
-  if (sortType !== 'Date') {
-    const modsClone = [...mods]
-    modsClone.reverse()
-    let field
-    if (sortType === 'Rating') {
-      field = ratingCalcMethod === CALC_METHOD_MEDIAN ? 'MedianRating' : 'Rating'
-    } else {
-      field = sortType
-    }
-    mods = sortBy(modsClone, field).reverse()
-  }
-
-  // ----------- ОБРАБОТЧИКИ СОБЫТИЙ -----------
+  }, [filters.tags.size])
 
   function updateURL() {
     const sp = new URLSearchParams()
@@ -220,65 +133,28 @@ function Index(props) {
     updateURL()
   }
 
-  // TO-DO: переписать более react way
   function selectRandom() {
-    if (!mods.length) {
-      return
-    }
-    // сбросить аутлайн
-    const withOutline =  main.current.querySelector('.mod[style]')
-    if (withOutline) {
-      withOutline.removeAttribute('style')
-    }
-
-    const n = random(mods.length - 1)
-    const m = main.current.querySelectorAll('.mod')
-    const el = m[n]
-    el.scrollIntoView()
-    // А если мод в самом низу страницы? Надо еще и подсветить.
-    el.style.outline = '3px solid violet'
+    setHighlighted(random(mods.length - 1))
   }
-
-  const platforms = props.platforms.map(function(p, i) {
-    return <Form.Check key={p} label={p} onChange={() => {toggleSet('platforms', p)}} checked={filters.platforms.has(p)} id={'platform' + i} />
-  })
-
-  // usememo??
-  // or https://reactjs.org/docs/lists-and-keys.html#embedding-map-in-jsx
-
-  const list2 = years.map(function(y, i) {
-    return <Form.Check key={y} label={y} onChange={() => {toggleSet('years', y)}} checked={filters.years.has(y)} id={'year' + i} />
-  })
-
-  const tags = props.tags.map(function(t, i) {
-    return <Form.Check key={t} label={t} onChange={() => {toggleSet('tags', t)}} checked={filters.tags.has(t)} id={'tag' + i} />
-  })
 
   console.timeEnd('index init')
   return (
     <Page {...props}>
-      {/* <div className="tile">
-        <div>Заходов на страницу (включая ботов) с момента запуска сервера ({formatDistanceStrict(props.serverStarted, firstRenderTime, { locale: ru, addSuffix: true, roundingMethod: 'floor' })}): {props.requests}</div>
-      </div> */}
-      <div className="page__flex-govno">
-        <div ref={main} className="page__main">
-          <div style={{display: mods.length ? 'none' : null}} className="tile">Ничего не найдено</div>
-        {
-        mods.map(function(mod) {
-          return <Mod key={mod.Url} mod={mod} ratingCalcMethod={ratingCalcMethod} />
-        })
-        }
+      <div style={{display: 'flex'}}>
+        <div style={{flexGrow: 1, paddingRight: 20}}>
+          {/* <div style={{display: mods.length ? 'none' : null}} className="tile">Ничего не найдено</div> */}
+          {mods}
         </div>
-        <div ref={kek} className="page_sidebar">
-          <div onClick={selectRandom} className="tile page__sidebar-inner ad">
-              <div className="ololo">показать случайный мод</div>
+        <div ref={sidebar} style={{width: 320, fontSize: 17, flexShrink: 0}}>
+          <div onClick={selectRandom} className="tile sidebar-inner ad">
+            <div className="ololo">показать случайный мод</div>
           </div>
           <Link href="/random">
-            <div className="tile page__sidebar-inner ad">
+            <div className="tile sidebar-inner ad">
                 <div className="ololo">Испытать удачу в рулетке</div>
             </div>
           </Link>
-          <div class="tile page__sidebar-inner">
+          <div className="tile sidebar-inner">
             <MenuSpoiler title="Способ рассчёта рейтинга">
               <RadioGroup name="egeereg" selectedValue={ratingCalcMethod} onChange={changeRatingCalcMethod}>
                 <Radio value={CALC_METHOD_MEDIAN} label="Медиана" />
@@ -293,21 +169,13 @@ function Index(props) {
                 <Radio value="Reviews" label="По числу отзывов" />
               </RadioGroup>
             </MenuSpoiler>
-            <MenuSpoiler title="Платформа">
-              <div className="page__sidebar-list">{platforms}</div>
-            </MenuSpoiler>
-            <MenuSpoiler title="Год выхода">
-              <div className="page__sidebar-list">{list2}</div>
-            </MenuSpoiler>
-            <MenuSpoiler title="Теги">
-              <div className="page__sidebar-list">{tags}</div>
-            </MenuSpoiler>
-            <MenuSpoiler title="Дополнительно">
-              <div className="page__sidebar-list">
-                <Form.Check label="Есть обзор от Волка" onChange={toggleBool} data-value="review" checked={filters.review} id="add-1" />
-                <Form.Check label="Есть видео от Волка" onChange={toggleBool} data-value="video" checked={filters.video} id="add-2" />
-                <Form.Check label="Есть гайд на форуме" onChange={toggleBool} data-value="guide" checked={filters.guide} id="add-3" />
-              </div>
+            <MenuSpoiler title="Платформа" className="sidebar-list">{platforms}</MenuSpoiler>
+            <MenuSpoiler title="Год выхода" className="sidebar-list">{years}</MenuSpoiler>
+            <MenuSpoiler title="Теги" className="sidebar-list">{tags}</MenuSpoiler>
+            <MenuSpoiler title="Дополнительно" className="sidebar-list">
+              <Form.Check label="Есть обзор от Волка" onChange={toggleBool} data-value="review" checked={filters.review} id="add-1" />
+              <Form.Check label="Есть видео от Волка" onChange={toggleBool} data-value="video" checked={filters.video} id="add-2" />
+              <Form.Check label="Есть гайд на форуме" onChange={toggleBool} data-value="guide" checked={filters.guide} id="add-3" />
             </MenuSpoiler>
           </div>
         </div>

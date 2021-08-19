@@ -1,7 +1,35 @@
+.sidebar-inner {
+    transform: translate(0, 0); /* For browsers don't support translate3d. */
+    transform: translate3d(0, 0, 0);
+    will-change: position, transform;
+
+    height: max-content;
+    font-size: 17px;
+    margin-bottom: 0;
+}
+
+.sidebar-inner.ad {
+    margin-bottom: 20px;
+    cursor: pointer;
+}
+
+.ololo {
+    text-transform: uppercase;
+    text-align: center;
+    /* font-size: 19px; */
+    /* margin-top: -15px; */
+    user-select: none;
+}
+
 .sidebar-list {
     overflow: auto;
     max-height: 300px;
+    /* margin-bottom: 20px; */
 }
+
+/* .page__sidebar-list:last-child {
+    margin-bottom: 0;
+} */
 
 .sidebar-list::-webkit-scrollbar {
     width: 12px;
