@@ -69,6 +69,7 @@ function Page(props) {
           --color-mod-tag: {t.modTag};
           --color-no-bg: {t.noBg};
           --bg-art: url({trash ? '/art.jpg' : ''});
+          --color-title-hover: {t.titleHover};
         {'}'}
       </style>
       <div className="theme-picker">
