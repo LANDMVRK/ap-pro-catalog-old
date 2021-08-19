@@ -1,10 +1,10 @@
-import 'bootstrap/dist/css/bootstrap.css'
+import '../styles/globals.css'
 
 import '../styles/page.css'
 import '../styles/index.css'
 import '../styles/mod.css'
 import '../styles/random.css'
-import '../styles/test.css'
+import '../styles/buttons.scss'
 
 
 function MyApp({ Component, pageProps }) {
