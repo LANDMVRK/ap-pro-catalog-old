@@ -1,6 +1,5 @@
 import sortBy from 'lodash.sortby'
 
-// фигово...
 const CALC_METHOD_MEDIAN = 'median'
 
 function filterAndSort(_mods, filters, sortType, ratingCalcMethod) {
@@ -57,8 +56,6 @@ function filterAndSort(_mods, filters, sortType, ratingCalcMethod) {
   console.timeEnd('filter')
 
   console.time('sort')
-
-  // Сортировать лучше в конце уже отфильтрованный список.
   if (sortType !== 'Date') {
     const modsClone = [...mods]
     modsClone.reverse()
