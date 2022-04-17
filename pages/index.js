@@ -29,33 +29,90 @@ const CALC_METHOD_MEAN = 'mean'
 
 const isBrowser = typeof window !== 'undefined'
 
-export async function getServerSideProps(context) {
-  const scraped = await fetch('http://localhost/data.json')
-  const scrapedJSON = await scraped.json()
+// export async function getServerSideProps(context) {
+//   const scraped = await fetch('http://localhost/data.json')
+//   const scrapedJSON = await scraped.json()
 
-  const tags = await fetch('http://localhost/tags.json')
-  const tagsJSON = await tags.json()
+//   const tags = await fetch('http://localhost/tags.json')
+//   const tagsJSON = await tags.json()
 
-  const platforms = await fetch('http://localhost/platforms.json')
-  const platformsJSON = await platforms.json()
+//   const platforms = await fetch('http://localhost/platforms.json')
+//   const platformsJSON = await platforms.json()
 
-  return {
-    props: {
-      scraped: scrapedJSON,
-      tags: tagsJSON,
-      platforms: platformsJSON
-    }, // will be passed to the page component as props
+//   return {
+//     props: {
+//       scraped: scrapedJSON,
+//       tags: tagsJSON,
+//       platforms: platformsJSON
+//     }, // will be passed to the page component as props
+//   }
+// }
+
+import scraped from '../Result of scraping/data.json';
+
+scraped.Data.forEach(mod => {
+  mod.ReleaseDate = new Date(mod.ReleaseDate * 1000).toLocaleDateString('ru-RU');
+
+  switch (mod.Platform) {
+    case 0: {
+      mod.Platform = 'Тень Чернобыля'
+      break;
+    }
+    case 1: {
+      mod.Platform = 'Чистое небо'
+      break;
+    }
+    case 2: {
+      mod.Platform = 'Зов Припяти'
+      break;
+    }
+    case 3: {
+      mod.Platform = 'Arma 3'
+      break;
+    }
+    case 4: {
+      mod.Platform = 'DayZ'
+      break;
+    }
+    case 5: {
+      mod.Platform = 'Minecraft'
+      break;
+    }
+    case 6: {
+      mod.Platform = 'Cry Engine 2'
+      break;
+    }
+  }
+});
+
+const hz = new Set();
+
+for (const mod of scraped.Data) {
+  for (const tag of mod.Tags) {
+    hz.add(tag);
   }
 }
 
+const tags = [...hz];
 
+const hz2 = new Set();
+
+for (const mod of scraped.Data) {
+  hz2.add(mod.Platform);
+}
+
+
+
+
+
+const platforms = [...hz2];
 
 function Index(props) {
   if (!isBrowser) {
     return <Page />
   }
 
-  const { scraped, tags, platforms } = props
+  // const { scraped, tags, platforms } = props
 
   console.time('index init')
 
@@ -100,7 +157,7 @@ function Index(props) {
     guide: !!query.guide
   }
   let sortType = query['sort_type'] || 'Date'
-  let ratingCalcMethod = query['rating_calc_method'] || CALC_METHOD_MEDIAN
+  let ratingCalcMethod = query['rating_calc_method'] || CALC_METHOD_MEAN//CALC_METHOD_MEDIAN
 
   // 2. Сбрасываем список модов, отображаемых на экране.
   let mods = scraped.Data

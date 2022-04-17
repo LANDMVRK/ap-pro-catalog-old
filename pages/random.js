@@ -36,12 +36,15 @@ const style = `
   }
 `
 
+import scraped from '../Result of scraping/data.json';
+
 function Random(props) {
   if (!isBrowser) {
     return <Page />
   }
 
-  const listOfMods = props.data.Data
+  // const listOfMods = props.data.Data
+  const listOfMods = scraped.Data;
 
   if (numOfModsToChooseFrom > listOfMods.length) {
     throw new Error('numOfModsToChooseFrom > listOfMods.length')
@@ -119,10 +122,10 @@ function Random(props) {
           <div className="hehe" ref={ref} style={{transform: `translateX(${left}px)`}}>
           {
           mods.map(function(mod) {
-            const { Url, PicBase, Rating } = mod
+            const { Url, /*PicBase,*/ PicURL, Rating } = mod
             const ratingColor = getRatingColor(Rating)
             return (
-              <a href={Url} className="hehe__card" style={{backgroundImage: `url(/previews/${PicBase})`}} key={mod.Url}>
+              <a href={Url} className="hehe__card" style={{backgroundImage: `url(${PicURL})`/*`url(/previews/${PicBase})`*/}} key={mod.Url}>
                 <div className="hehe__card-bottom" style={{background: ratingColor}}></div>
               </a>
             )
@@ -140,18 +143,18 @@ function Random(props) {
   )
 }
 
-async function getServerSideProps(context) {
-  const scraped = await fetch('http://localhost/data.json')
-  const scrapedJSON = await scraped.json()
+// async function getServerSideProps(context) {
+//   const scraped = await fetch('http://localhost/data.json')
+//   const scrapedJSON = await scraped.json()
 
-  return {
-    props: {
-      data: scrapedJSON
-    }, // will be passed to the page component as props
-  }
-}
+//   return {
+//     props: {
+//       data: scrapedJSON
+//     }, // will be passed to the page component as props
+//   }
+// }
 
 export default Random
-export {
-  getServerSideProps
-}
+// export {
+//   getServerSideProps
+// }

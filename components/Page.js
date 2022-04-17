@@ -110,7 +110,7 @@ function Page(props) {
           Благодарность
           <div>— <a className="page__link" href="https://ap-pro.ru/profile/1580-chiliaz/">Chiliaz</a> — идея сделать рандомайзер;</div>
           <div>— Всем — за приятную обратную связь и то, что делитесь ссылкой.</div>
-          <div style={{marginTop: '16px'}}>Написать автору — <a className="page__link" href="https://t.me/xcmoz">t.me/xcmoz</a></div>
+          <div style={{marginTop: '16px'}}>Написать автору — <a className="page__link" href="https://t.me/cczcx">t.me/cczcx</a></div>
         </div>
         {props.children}
       </div>

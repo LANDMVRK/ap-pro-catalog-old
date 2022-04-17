@@ -22,6 +22,8 @@ class Radio extends React.Component {
         <input
           className="form-check-input"
           id={id}
+
+          disabled={this.props.label === 'Медиана'}
           
           // {...this.props}
           role="radio"

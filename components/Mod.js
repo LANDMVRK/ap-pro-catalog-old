@@ -1,7 +1,7 @@
 import { getRatingColor } from '../js/getRatingColor'
 
 function Mod(props) {
-    const { Url, Title, PicBase, Description, Tags, Views, ReleaseDate } = props.mod
+    const { Url, Title, /*PicBase,*/ PicURL, Description, Tags, Views, ReleaseDate } = props.mod
     
     const Rating = props.ratingCalcMethod === 'median' ? props.mod.MedianRating : props.mod.Rating
     
@@ -13,7 +13,7 @@ function Mod(props) {
         <a className="mod__title" href={Url}>{Title}</a>
         <div className="mod__flex-govno">
           <div className="mod__preview-wrapper">
-            <img className="mod__preview" src={'/previews/' + PicBase} loading="lazy" />
+            <img className="mod__preview" src={PicURL/*'/previews/' + PicBase*/} loading="lazy" />
           </div>
           <div className="mod__description">
             <div className="mod__description-text">{Description}</div>

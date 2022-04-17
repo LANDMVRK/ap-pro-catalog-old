@@ -1,0 +1,4 @@
+node_modules
+.next
+express-server/server.log
+out
