@@ -16,7 +16,7 @@ import random from 'lodash.random'
 
 // так надо. должны быть строки...
 const years = []
-for (let i = 2007; i <= 2021; i++) {
+for (let i = 2007; i <= 2022; i++) {
   years.push(i.toString())
 }
 
