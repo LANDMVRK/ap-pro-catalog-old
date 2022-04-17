@@ -15,7 +15,8 @@ const cardWidth = 250 // Из CSS.
 const numOfModsToChooseFrom = 50
 const animationDuration = 7500
 const easingFunc = [0.33, 1, 0.68, 1]
-const pathToSound = '/CS_GO Case + Knife Opening Sound Effect (audio-extractor (mp3cut.net).wav'
+// CS_GO Case + Knife Opening Sound Effect (audio-extractor (mp3cut.net).wav
+const pathToSound = '/test.wav'
 
 // --------- СОСТОЯНИЕ КНОПКИ ---------
 const stateInitial = 0
