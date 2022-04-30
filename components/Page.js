@@ -33,7 +33,20 @@ const themes = {
 }
 
 
+
+
 const isBrowser = typeof window !== 'undefined'
+
+if (isBrowser) {
+  document.body.addEventListener('mousemove', ev => {
+    ev.stopPropagation();
+  });
+  document.body.insertAdjacentHTML('afterbegin', `
+  <canvas width="1" height="1" id="container" style="position:fixed;z-index:-33"></canvas>
+  <!-- Drizzle -->
+  <div class="slide" id="slide-2" data-weather="drizzle"></div>
+  `);
+}
 
 function Page(props) {
   let t
@@ -60,7 +73,7 @@ function Page(props) {
       --color-mod-tag: ${lol.modTag};
       --color-no-bg: ${lol.noBg};
       --color-title-hover: ${lol.titleHover};
-      --bg-art: ${garbage === 'true' ? 'url(/art.jpg)' : 'url()'};
+      --bg-art: ${garbage === 'true' ? 'url(/art11111111111111111111.jpg)' : 'url()'};
     }
   `
 
@@ -91,6 +104,12 @@ function Page(props) {
           <link rel="preconnect" href="https://fonts.gstatic.com" />
           <link href="https://fonts.googleapis.com/css2?family=PT+Sans&display=swap" rel="stylesheet" />
           <script src="https://unpkg.com/sticky-sidebar@3.3.1/dist/sticky-sidebar.js"></script>
+
+
+          <link rel="stylesheet" type="text/css" href="style1.css" />
+
+          <script defer src="index.min.js"></script>
+
         </Head>
         <style>{test}</style>
         <div className="theme-picker">
