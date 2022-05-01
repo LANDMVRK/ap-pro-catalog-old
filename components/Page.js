@@ -38,9 +38,9 @@ const themes = {
 const isBrowser = typeof window !== 'undefined'
 
 if (isBrowser) {
-  document.body.addEventListener('mousemove', ev => {
-    ev.stopPropagation();
-  });
+ // document.body.addEventListener('mousemove', ev => {
+   // ev.stopPropagation();
+  // });
   document.body.insertAdjacentHTML('afterbegin', `
   <canvas width="1" height="1" id="container" style="position:fixed;z-index:-33"></canvas>
   <!-- Drizzle -->
